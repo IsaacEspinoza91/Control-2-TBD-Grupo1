@@ -38,6 +38,7 @@ public class UsuarioRepository {
     }
 
     // Obtiene Usuario segun email o nick. Utilizado para login
+    // Utiliza implicitamente indice en la base de datos
     public Usuario findByEmailOrNick(String username) {
         Usuario usuario = findByEmail(username);
         if (usuario == null) {
