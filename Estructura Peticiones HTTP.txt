@@ -1,0 +1,20 @@
+
+Login
+POST, permite iniciar sesión con email o con nick   URL: http://localhost:8080/api/auth/login
+{
+    "emailOrNick": "mike1@dundder_mifflin.com",
+    "password": "mike1234"
+}
+
+
+Register
+POST, URL: http://localhost:8080/api/auth/register
+{
+    "rut": "14654356-1",
+    "nombre": "Michael1",
+    "apellido": "Scoot1",
+    "email": "mike1@dundder_mifflin.com",
+    "password": "mike1234",
+    "nick": "mike_prision1",
+    "tipo": "admin"
+}
