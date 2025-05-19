@@ -8,6 +8,8 @@ public class RegisterRequest {
     private String password;
     private String nick;
     private String tipo;
+    private Double lat;
+    private Double lng;
 
     // Getters y Setters
     public String getRut() {
@@ -64,5 +66,21 @@ public class RegisterRequest {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 }

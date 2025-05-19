@@ -23,7 +23,11 @@ public class UsuarioService {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        // Encriptar la contrasenia
+        // Validar coordenadas si son requeridas
+        if (usuario.getUbicacion() == null) {
+            throw new RuntimeException("La ubicación es requerida");
+        }
+
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
         return usuarioRepository.save(usuario);

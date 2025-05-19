@@ -74,6 +74,30 @@
                     </select>
                 </div>
 
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        Seleccione su ubicación
+                    </label>
+                    <l-map
+                        ref="mapRef"
+                        class="map-container"
+                        style="height: 300px"
+                        :zoom="13"
+                        :center="mapCenter"
+                        @click="onMapClick"
+                    >
+
+                        <l-tile-layer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <l-marker :lat-lng="ubicacion" v-if="ubicacion" />
+                    </l-map>
+                    <small v-if="ubicacion">Lat: {{ ubicacion.lat }}, Lng: {{ ubicacion.lng }}</small>
+                </div>
+
+
                 <button type="submit" class="btn btn-primary register-btn" :disabled="loading">
                     <i class="bi bi-person-plus me-2"></i>
                     <span v-if="loading">Registrando...</span>
@@ -96,11 +120,20 @@
 </template>
 
 <script>
+import "leaflet/dist/leaflet.css"
+import "../../utils/leaflet-config" 
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet"
 import { useAuthStore } from '../../stores/auth'
 import { ref } from 'vue'
+import { onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
+    components: {
+        LMap,
+        LTileLayer,
+        LMarker
+    },
     setup() {
         const authStore = useAuthStore()
         const router = useRouter()
@@ -112,14 +145,38 @@ export default {
         const password = ref('')
         const nick = ref('')
         const tipo = ref('cliente')
+        const mapCenter = ref({ lat: -33.450469, lng: -70.680136 }) // USACH por defecto
+        const ubicacion = ref(null)
         const loading = ref(false)
         const message = ref('')
         const success = ref(false)
+
+        const onMapClick = (e) => {
+            ubicacion.value = {
+                lat: parseFloat(e.latlng.lat.toFixed(6)),
+                lng: parseFloat(e.latlng.lng.toFixed(6))
+            }
+        }
+
+        const mapRef = ref(null)
+        onMounted(() => {
+            if (mapRef.value?.leafletObject) {
+                mapRef.value.leafletObject.invalidateSize()
+            }
+        })
+
 
         const handleSubmit = async () => {
             try {
                 loading.value = true
                 message.value = ''
+
+                if (!ubicacion.value) {
+                    message.value = 'Debe seleccionar una ubicación en el mapa.'
+                    success.value = false
+                    loading.value = false
+                    return
+                }
 
                 const result = await authStore.register({
                     rut: rut.value,
@@ -128,7 +185,9 @@ export default {
                     email: email.value,
                     password: password.value,
                     nick: nick.value,
-                    tipo: tipo.value
+                    tipo: tipo.value,
+                    lat: ubicacion.value.lat,  // Cambiado de ubicacion a lat
+                    lng: ubicacion.value.lng   // Cambiado de ubicacion a lng
                 })
 
                 success.value = result.success
@@ -143,6 +202,7 @@ export default {
                     password.value = ''
                     nick.value = ''
                     tipo.value = 'cliente'
+                    ubicacion.value = null
                 }
             } catch (err) {
                 success.value = false
@@ -154,15 +214,16 @@ export default {
 
         return {
             rut, nombre, apellido, email, password, nick, tipo,
-            loading, message, success, handleSubmit
+            loading, message, success, handleSubmit,
+            mapCenter, ubicacion, onMapClick
         }
     }
 }
+
 </script>
 
 <style scoped>
 .register-container {
-    background-image: url('../../assets/login-bg.jpg');
     background-size: cover;
     background-position: center;
     min-height: 100vh;
@@ -180,7 +241,7 @@ export default {
     width: 100%;
     max-width: 500px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
+} 
 
 .register-header {
     margin-bottom: 1.5rem;
@@ -273,6 +334,11 @@ export default {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+.map-container {
+    height: 300px;
+    width: 100%;
 }
 
 /* Iconos */

@@ -1,0 +1,12 @@
+Librerías Front:
+
+Pinia
+Vue-router
+Bootstrap
+Bootstrap icons
+Axios
+PopperJS
+Leaflet
+
+
+npm install vue-router pinia pinia-plugin-persistedstate axios bootstrap @popperjs/core bootstrap-icons @vue-leaflet/vue-leaflet leaflet

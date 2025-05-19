@@ -7,7 +7,7 @@ CREATE TABLE usuario (
     apellido VARCHAR(50),
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    -- ubicacion GEOMETRY(POINT, 4326),
+    ubicacion GEOMETRY(POINT, 4326),
     nick VARCHAR(50) UNIQUE NOT NULL,
     tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('admin', 'cliente'))
 );
