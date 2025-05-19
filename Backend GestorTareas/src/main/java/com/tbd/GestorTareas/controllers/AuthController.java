@@ -56,14 +56,17 @@ public class AuthController {
             }
 
             // creacion de usuario
-            Usuario usuario = new Usuario();
-            usuario.setRut(request.getRut());
-            usuario.setNombre(request.getNombre());
-            usuario.setApellido(request.getApellido());
-            usuario.setEmail(request.getEmail());
-            usuario.setPassword(request.getPassword());
-            usuario.setNick(request.getNick());
-            usuario.setTipo(request.getTipo());
+            Usuario usuario = new Usuario(
+                    request.getRut(),
+                    request.getNombre(),
+                    request.getApellido(),
+                    request.getEmail(),
+                    request.getPassword(),
+                    request.getNick(),
+                    request.getTipo(),
+                    request.getLat(),
+                    request.getLng()
+            );
 
             // Usuario registrado
             Usuario usuarioRegistrado = usuarioService.registrarUsuario(usuario);

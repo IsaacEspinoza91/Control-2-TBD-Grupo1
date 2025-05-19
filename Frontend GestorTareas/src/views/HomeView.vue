@@ -9,7 +9,7 @@
 
                     <div class="welcome-text" :class="{ 'initial-animation': shouldAnimate }">
                         <h1 class="welcome-title">Bienvenido al Gestor de Tareas</h1>
-                        <p class="welcome-subtitle">Administrar tus tareas diarias</p>
+                        <p class="welcome-subtitle">Administra tus tareas diarias</p>
                     </div>
                 </div>
             </div>

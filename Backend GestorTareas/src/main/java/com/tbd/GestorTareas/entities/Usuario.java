@@ -7,14 +7,15 @@ public class Usuario {
     private String apellido;
     private String email;
     private String password;
-    //private String ubicacion;
     private String nick;
     private String tipo;    // admin o cliente
+    private String ubicacion; // Almacenaremos el WKT (Well-Known Text) del punto
 
     // Constructores
     public Usuario() {}
 
-    public Usuario(String rut, String nombre, String apellido, String email, String password, String nick, String tipo) {
+    public Usuario(String rut, String nombre, String apellido, String email,
+                   String password, String nick, String tipo, Double latitud, Double longitud) {
         this.rut = rut;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -22,6 +23,7 @@ public class Usuario {
         this.password = password;
         this.nick = nick;
         this.tipo = tipo;
+        setUbicacion(latitud, longitud);
     }
 
     // Getters y Setters
@@ -87,5 +89,21 @@ public class Usuario {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    // Crear ubicacion segun latitud y longitud
+    public void setUbicacion(Double latitud, Double longitud) {
+        if (latitud != null && longitud != null) {
+            // PostGIS usa orden X,Y (lng,lat). Ademas se reemplazan las comas por puntos para el formato
+            this.ubicacion = String.format("POINT(%f %f)", longitud, latitud).replace(",", ".");
+        }
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 }

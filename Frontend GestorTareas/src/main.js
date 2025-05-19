@@ -5,6 +5,7 @@ import router from './router'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
+import 'leaflet/dist/leaflet.css'
 
 
 const app = createApp(App)

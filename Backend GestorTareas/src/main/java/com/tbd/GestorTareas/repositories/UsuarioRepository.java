@@ -39,7 +39,7 @@ public class UsuarioRepository {
 
     // Obtiene Usuario segun email o nick. Utilizado para login
     // Utiliza implicitamente indice en la base de datos
-    public Usuario findByEmailOrNick(String username) {
+    public Usuario findByEmailOrNick1(String username) {
         Usuario usuario = findByEmail(username);
         if (usuario == null) {
             usuario = findByNick(username);
@@ -47,19 +47,37 @@ public class UsuarioRepository {
         return usuario;
     }
 
+    public Usuario findByEmailOrNick(String username) {
+        String sql = "SELECT id, rut, nombre, apellido, email, password, nick, tipo, " +
+                "ST_AsText(ubicacion) as ubicacion FROM usuario WHERE email = :username OR nick = :username";
+
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("username", username)
+                    .executeAndFetchFirst(Usuario.class);
+        }
+    }
+
 
     public Usuario save(Usuario usuario) {
-        String sql = "INSERT INTO usuario (rut, nombre, apellido, email, password, nick, tipo) " +
-                "VALUES (:rut, :nombre, :apellido, :email, :password, :nick, :tipo)";
+        String sql = "INSERT INTO usuario (rut, nombre, apellido, email, password, nick, tipo, ubicacion) " +
+                "VALUES (:rut, :nombre, :apellido, :email, :password, :nick, :tipo, ST_GeomFromText(:ubicacion, 4326))";
 
         try (Connection con = sql2o.open()) {
             // Cambiamos el manejo del ID generado
             Integer id = (Integer) con.createQuery(sql, true)
-                    .bind(usuario)
+                    .addParameter("rut", usuario.getRut())
+                    .addParameter("nombre", usuario.getNombre())
+                    .addParameter("apellido", usuario.getApellido())
+                    .addParameter("email", usuario.getEmail())
+                    .addParameter("password", usuario.getPassword())
+                    .addParameter("nick", usuario.getNick())
+                    .addParameter("tipo", usuario.getTipo())
+                    .addParameter("ubicacion", usuario.getUbicacion())
                     .executeUpdate()
                     .getKey();
 
-            usuario.setId(id); // Convertimos a long
+            usuario.setId(id);
             return usuario;
         }
     }
