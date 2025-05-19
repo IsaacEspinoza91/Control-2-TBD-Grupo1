@@ -8,7 +8,10 @@
             <div class="collapse navbar-collapse" id="clientNavbar">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/client/tasks">Mis Tareas</router-link>
+                        <router-link class="nav-link" to="/client">Home</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link" to="/client/tasks">Historial Tareas</router-link>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -20,7 +23,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="../../assets/user-icon.png" alt="Cliente" class="rounded-circle me-2" width="30"
                                 height="30">
-                            {{ authStore.user?.emailOrNick }}
+                            {{ authStore.user?.nombreUsuario }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="clientDropdown">
                             <li>
@@ -50,7 +53,7 @@ export default {
 
         const logout = () => {
             authStore.logout()
-            router.push('/login')
+            router.push('/home')
         }
 
         return { authStore, logout }

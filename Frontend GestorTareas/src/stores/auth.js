@@ -18,7 +18,8 @@ export const useAuthStore = defineStore('auth', () => {
             token.value = data.token
             user.value = {
                 emailOrNick: credentials.emailOrNick,
-                tipoUsuario: data.tipoUsuario
+                tipoUsuario: data.tipoUsuario,
+                nombreUsuario: data.nombreUsuario
             }
 
             localStorage.setItem('token', data.token)
@@ -51,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     function redirectAfterLogin(role) {
         if (role === 'admin') {
             router.push('/admin')
-        } else {
+        } else if (role === 'cliente') {
             router.push('/client')
         }
     }
@@ -61,7 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
         localStorage.removeItem('token')
         localStorage.removeItem('user')
-        router.push('/login')
+        router.push('/home')
     }
 
     return { token, user, isAuthenticated, userRole, login, register, logout }

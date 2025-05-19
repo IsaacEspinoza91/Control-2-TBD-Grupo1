@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <router-link class="navbar-brand" to="/">Gestor Tareas</router-link>
+            <router-link class="navbar-brand" to="/home">Gestor Tareas</router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -18,7 +18,7 @@
                             data-bs-toggle="dropdown">
                             <img src="../../assets/user-icon.png" alt="Usuario" class="rounded-circle" width="30"
                                 height="30">
-                            {{ authStore.user?.emailOrNick }}
+                            {{ authStore.user?.nombreUsuario }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><button class="dropdown-item" @click="authStore.logout">Cerrar Sesión</button></li>
@@ -69,7 +69,7 @@ export default {
         const handleLogout = () => {
             authStore.logout()
             showLogoutModal.value = false
-            router.push('/login')
+            router.push('/home')
         }
 
         return { authStore, showLogoutModal, handleLogout }

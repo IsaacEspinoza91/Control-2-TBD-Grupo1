@@ -2,12 +2,14 @@
     <div class="admin-layout">
         <AdminNavBar />
         <div class="content">
-            <h1>Panel de Administración</h1>
-            <p>Bienvenido, {{ authStore.user?.emailOrNick }}</p>
-            <div class="card">
-                <div class="card-body">
-                    <h2>Funciones de administrador</h2>
-                    <p>Aquí irán las herramientas de administración del sistema.</p>
+            <div class="container mt-4">
+                <h1>Panel de Administración</h1>
+                <p>Bienvenido, {{ authStore.user?.nombreUsuario }}</p>
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Funciones de administrador</h2>
+                        <p>Funcionalidades.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,9 +38,7 @@ export default {
 }
 
 .content {
-    /* Altura navbar*/
-    margin-top: 60px;
-    padding: 20px;
     flex: 1;
+    padding: 20px;
 }
 </style>

@@ -20,7 +20,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="../../assets/user-icon.png" alt="Admin" class="rounded-circle me-2" width="30"
                                 height="30">
-                            {{ authStore.user?.emailOrNick }}
+                            {{ authStore.user?.nombreUsuario }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
                             <li>
@@ -48,7 +48,7 @@ export default {
 
         const logout = () => {
             authStore.logout()
-            router.push('/login')
+            router.push('/home')
         }
 
         return { authStore, logout }
