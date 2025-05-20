@@ -1,5 +1,5 @@
 CREATE database GestorTareas;
-\connect  GestorTareas;
+\connect  gestortareas;
 
 CREATE EXTENSION postgis;
 
