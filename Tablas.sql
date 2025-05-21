@@ -15,6 +15,13 @@ CREATE TABLE usuario (
     tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('admin', 'cliente'))
 );
 
+CREATE TABLE sector (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    categoria VARCHAR(50) NOT NULL, -- construcción, semáforos, etc.
+    geom GEOGRAPHY(POLYGON, 4326)
+);
+
 CREATE TABLE tarea (
     id SERIAL PRIMARY KEY,
     titulo VARCHAR(50),
@@ -22,10 +29,10 @@ CREATE TABLE tarea (
     fechacreacion DATE,
     fechavencimiento DATE,
     estado VARCHAR(50),
-    sector VARCHAR(50),
     ubicacion GEOGRAPHY(POINT, 4326),
     eliminado BOOLEAN,
-    usuario_id INTEGER REFERENCES usuario(id)
+    usuario_id INTEGER REFERENCES usuario(id),
+    sector_id INTEGER REFERENCES sector(id)  -- asociación con sector
 );
 
 CREATE TABLE notificacion (
