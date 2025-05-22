@@ -3,6 +3,8 @@ package com.tbd.GestorTareas.controllers;
 import com.tbd.GestorTareas.entities.Usuario;
 import com.tbd.GestorTareas.security.*;
 import com.tbd.GestorTareas.services.UsuarioService;
+import com.tbd.GestorTareas.util.GeometryUtil;
+import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,45 +30,40 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
+            // MAP para mostrar respuestas erroenas
+            Map<String, String> errorResponse = new HashMap<>();
 
+            // Validacion rut ya existe
             if (usuarioService.existsByRut(request.getRut())) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Error: El rut ya está en uso");
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(response);
+                errorResponse.put("message", "Error: El rut ya está en uso");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
 
             // Validacion email existente
             if (usuarioService.existsByEmail(request.getEmail())) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Error: El email ya está registrado");
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(response);
+                errorResponse.put("message", "Error: El email ya está registrado");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
 
             // Validacion nick existente
             if (usuarioService.existsByNick(request.getNick())) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Error: El nick ya está en uso");
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(response);
+                errorResponse.put("message", "Error: El nick ya está en uso");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
 
-            // creacion de usuario
-            Usuario usuario = new Usuario(
-                    request.getRut(),
-                    request.getNombre(),
-                    request.getApellido(),
-                    request.getEmail(),
-                    request.getPassword(),
-                    request.getNick(),
-                    request.getTipo(),
-                    request.getLat(),
-                    request.getLng()
-            );
+            // Crear punto de ubicación
+            Point ubicacion = GeometryUtil.createPoint(request.getLat(), request.getLng());
+
+            // creacion de usuario. Patron BUILDER
+            Usuario usuario = new Usuario();
+            usuario.setRut(request.getRut());
+            usuario.setNombre(request.getNombre());
+            usuario.setApellido(request.getApellido());
+            usuario.setEmail(request.getEmail());
+            usuario.setPassword(request.getPassword());
+            usuario.setNick(request.getNick());
+            usuario.setTipo(request.getTipo());
+            usuario.setUbicacion(ubicacion);
 
             // Usuario registrado
             Usuario usuarioRegistrado = usuarioService.registrarUsuario(usuario);
@@ -82,7 +79,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             // Generacion de suario
             Usuario usuarioAutenticado = usuarioService.autenticarUsuario(request.getemailOrNick(), request.getPassword());
@@ -91,8 +88,10 @@ public class AuthController {
             String jwtToken = jwtService.generateToken(new UserDetailsImpl(usuarioAutenticado));
 
             return ResponseEntity.ok(new AuthResponse(jwtToken, usuarioAutenticado.getTipo(), usuarioAutenticado.getNick()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
 }

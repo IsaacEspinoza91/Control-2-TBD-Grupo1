@@ -71,12 +71,17 @@
 		</dependency>
 
 
-		<!-- SQL2O -->
+		<!-- Para Spring Data JPA -->
 		<dependency>
-			<groupId>org.sql2o</groupId>
-			<artifactId>sql2o</artifactId>
-			<version>1.9.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+			<version>6.6.13.Final</version>
+		</dependency>
+
 
 		<!-- JWT -->
 		<dependency>

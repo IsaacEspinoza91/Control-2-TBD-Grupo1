@@ -5,8 +5,12 @@ import com.tbd.GestorTareas.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
+@Transactional
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
@@ -29,16 +33,16 @@ public class UsuarioService {
         }
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario autenticarUsuario(String email, String password) {
-        Usuario usuario = usuarioRepository.findByEmailOrNick(email);
+    public Usuario autenticarUsuario(String emailOrNick, String password) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailOrNick(emailOrNick);
 
-        if (usuario == null) {
-            throw new RuntimeException("Nick o Email incorrecto");
-        } else if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        Usuario usuario = usuarioOpt.orElseThrow(() ->
+                new RuntimeException("Nick o Email incorrecto"));
+
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 

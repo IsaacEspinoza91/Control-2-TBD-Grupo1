@@ -1,21 +1,37 @@
 package com.tbd.GestorTareas.entities;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
+
+@Entity
+@Table(name = "usuario")
 public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer  id;
+
+    @Column(unique = true)
     private String rut;
     private String nombre;
     private String apellido;
+
+    @Column(unique = true)
     private String email;
     private String password;
+
+    @Column(unique = true)
     private String nick;
     private String tipo;    // admin o cliente
-    private String ubicacion; // Almacenaremos el WKT (Well-Known Text) del punto
+    //private String ubicacion; // Almacenaremos el WKT (Well-Known Text) del punto
+    private Point ubicacion;
 
     // Constructores
     public Usuario() {}
 
-    public Usuario(String rut, String nombre, String apellido, String email,
-                   String password, String nick, String tipo, Double latitud, Double longitud) {
+    public Usuario(Integer id, String rut, String nombre, String apellido, String email, String password, String nick, String tipo, Point ubicacion) {
+        this.id = id;
         this.rut = rut;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -23,7 +39,18 @@ public class Usuario {
         this.password = password;
         this.nick = nick;
         this.tipo = tipo;
-        setUbicacion(latitud, longitud);
+        this.ubicacion = ubicacion;
+    }
+
+    public Usuario(String rut, String nombre, String apellido, String email, String password, String nick, String tipo, Point ubicacion) {
+        this.rut = rut;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.password = password;
+        this.nick = nick;
+        this.tipo = tipo;
+        this.ubicacion = ubicacion;
     }
 
     // Getters y Setters
@@ -92,18 +119,19 @@ public class Usuario {
     }
 
     // Crear ubicacion segun latitud y longitud
+    /*
     public void setUbicacion(Double latitud, Double longitud) {
         if (latitud != null && longitud != null) {
             // PostGIS usa orden X,Y (lng,lat). Ademas se reemplazan las comas por puntos para el formato
             this.ubicacion = String.format("POINT(%f %f)", longitud, latitud).replace(",", ".");
         }
-    }
+    }*/
 
-    public String getUbicacion() {
+    public Point getUbicacion() {
         return ubicacion;
     }
 
-    public void setUbicacion(String ubicacion) {
+    public void setUbicacion(Point ubicacion) {
         this.ubicacion = ubicacion;
     }
 }
