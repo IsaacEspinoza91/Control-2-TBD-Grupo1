@@ -1,12 +1,16 @@
 package com.tbd.GestorTareas.repositories;
 
 
+import com.tbd.GestorTareas.DTO.UsuarioDistanciaDTO;
 import com.tbd.GestorTareas.entities.Usuario;
 import com.tbd.GestorTareas.DTO.SectorConMasTareasRealizadasCercanasDTO;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UsuarioRepository {
@@ -16,6 +20,25 @@ public class UsuarioRepository {
     @Autowired
     public UsuarioRepository(Sql2o sql2o) {
         this.sql2o = sql2o;
+    }
+
+    public List<Usuario> findAll() {
+        String sql = "SELECT id, rut, nombre, apellido, email, password, nick, tipo, ST_AsText(ubicacion) as ubicacion FROM usuario";
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .executeAndFetch(Usuario.class);
+        }
+    }
+
+    public Optional<Usuario> findById(Integer id) {
+        String sql = "SELECT * FROM usuario WHERE id = :id";
+
+        try (Connection con = sql2o.open()) {
+            Usuario usuario = con.createQuery(sql)
+                    .addParameter("id", id)
+                    .executeAndFetchFirst(Usuario.class);
+            return Optional.ofNullable(usuario);
+        }
     }
 
     public Usuario findByEmail(String email) {
@@ -173,4 +196,80 @@ public class UsuarioRepository {
             return resultado;
         }
     }
+
+    public void update(Usuario usuario) {
+        String sql = "UPDATE usuario SET " +
+                "rut = :rut, " +
+                "nombre = :nombre, " +
+                "apellido = :apellido, " +
+                "email = :email, " +
+                "password = :password, " +
+                "nick = :nick, " +
+                "tipo = :tipo, " +
+                "ubicacion = ST_GeomFromText(:ubicacion, 4326) " +
+                "WHERE id = :id";
+
+        try (Connection con = sql2o.open()) {
+            con.createQuery(sql)
+                    .addParameter("rut", usuario.getRut())
+                    .addParameter("nombre", usuario.getNombre())
+                    .addParameter("apellido", usuario.getApellido())
+                    .addParameter("email", usuario.getEmail())
+                    .addParameter("password", usuario.getPassword())
+                    .addParameter("nick", usuario.getNick())
+                    .addParameter("tipo", usuario.getTipo())
+                    .addParameter("ubicacion", usuario.getUbicacion())
+                    .addParameter("id", usuario.getId())
+                    .executeUpdate();
+        }
+    }
+
+    public void deleteById(Integer id) {
+        String sql = "DELETE FROM usuario WHERE id = :id";
+        try (Connection con = sql2o.open()) {
+            con.createQuery(sql)
+                    .addParameter("id", id)
+                    .executeUpdate();
+        }
+    }
+
+    public boolean existsById(Integer id) {
+        String sql = "SELECT COUNT(*) > 0 FROM usuario WHERE id = :id";
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("id", id)
+                    .executeScalar(Boolean.class);
+        }
+    }
+
+
+    public List<UsuarioDistanciaDTO> obtenerPromedioDistanciaPorUsuario() {
+        String sql = """
+            SELECT
+                u.id AS usuario_id,
+                u.nombre AS nombre_usuario,
+                u.apellido AS apellido_usuario,
+                AVG(ST_Distance(t.ubicacion, ST_GeographyFromText(ST_AsText(u.ubicacion)))) AS promedio_distancia
+            FROM
+                tarea t
+            JOIN
+                usuario u ON t.usuario_id = u.id
+            WHERE
+                t.estado = 'realizada'
+            GROUP BY
+                u.id, u.nombre, u.apellido
+            ORDER BY
+                u.id;
+        """;
+
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery(sql)
+                    .addColumnMapping("usuario_id", "usuarioId")
+                    .addColumnMapping("nombre_usuario", "nombreUsuario")
+                    .addColumnMapping("apellido_usuario", "apellidoUsuario")
+                    .addColumnMapping("promedio_distancia", "promedioDistancia")
+                    .executeAndFetch(UsuarioDistanciaDTO.class);
+        }
+    }
+
 }

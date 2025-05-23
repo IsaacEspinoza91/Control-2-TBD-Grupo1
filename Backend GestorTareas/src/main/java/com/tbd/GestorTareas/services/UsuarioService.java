@@ -1,11 +1,15 @@
 package com.tbd.GestorTareas.services;
 
+import com.tbd.GestorTareas.DTO.UsuarioDistanciaDTO;
 import com.tbd.GestorTareas.entities.Usuario;
 import com.tbd.GestorTareas.DTO.SectorConMasTareasRealizadasCercanasDTO;
 import com.tbd.GestorTareas.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -17,6 +21,17 @@ public class UsuarioService {
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    // Obtener todos los usuarios
+    public List<Usuario> obtenerTodosUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    // Obtener usuario por id
+    public Usuario obtenerUsuarioPorId(Integer id) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        return usuarioOpt.orElse(null);
     }
 
     public Usuario registrarUsuario(Usuario usuario) {
@@ -69,4 +84,45 @@ public class UsuarioService {
     public SectorConMasTareasRealizadasCercanasDTO obtenerSectorConMasTareasRealizadasEn5Km(Long usuarioId) {
         return usuarioRepository.encontrarSectorConMasTareasRealizadasCercanas(usuarioId, 5.0);
     }
+
+    // Actualizar usuario
+    public Usuario actualizarUsuario(Integer id, Usuario usuarioActualizado) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+
+            // Actualiza solo los campos que quieres permitir modificar
+            usuario.setRut(usuarioActualizado.getRut());
+            usuario.setNombre(usuarioActualizado.getNombre());
+            usuario.setApellido(usuarioActualizado.getApellido());
+            usuario.setEmail(usuarioActualizado.getEmail());
+            usuario.setNick(usuarioActualizado.getNick());
+            usuario.setTipo(usuarioActualizado.getTipo());
+            usuario.setUbicacion(usuarioActualizado.getUbicacion());
+
+            // Si actualizas la contraseña, la encriptas
+            if (usuarioActualizado.getPassword() != null && !usuarioActualizado.getPassword().isEmpty()) {
+                usuario.setPassword(passwordEncoder.encode(usuarioActualizado.getPassword()));
+            }
+
+            return usuarioRepository.save(usuario);
+        } else {
+            return null; // Usuario no encontrado
+        }
+    }
+
+    // Eliminar usuario
+    public boolean eliminarUsuario(Integer id) {
+        if (usuarioRepository.existsById(id)) {
+            usuarioRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public List<UsuarioDistanciaDTO> obtenerPromedioDistanciaPorUsuario() {
+        return usuarioRepository.obtenerPromedioDistanciaPorUsuario();
+    }
+
 }
