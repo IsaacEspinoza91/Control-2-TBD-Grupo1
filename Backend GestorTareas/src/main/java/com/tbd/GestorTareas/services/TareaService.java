@@ -27,7 +27,8 @@ public class TareaService {
         return tareaRepository.findById(id);
     }
 
-    public Integer crearTarea(Tarea tarea) {
+    //Crear
+    public Tarea crearTarea(Tarea tarea) {
         return tareaRepository.save(tarea);
     }
 

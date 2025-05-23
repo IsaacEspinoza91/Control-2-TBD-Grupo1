@@ -26,7 +26,7 @@ public class TareaController {
     }
 
     @PostMapping
-    public Integer createTarea(@RequestBody Tarea tarea) {
+    public Tarea createTarea(@RequestBody Tarea tarea) {
         return tareaService.crearTarea(tarea);
     }
 

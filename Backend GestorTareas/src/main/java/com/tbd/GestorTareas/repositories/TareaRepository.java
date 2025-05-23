@@ -35,15 +35,27 @@ public class TareaRepository {
         }
     }
 
-    public Integer save(Tarea tarea) {
+    public Tarea save(Tarea tarea) {
         String sql = "INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id) " +
                 "VALUES (:titulo, :descripcion, :fechacreacion, :fechavencimiento, :estado, :ubicacion::geography, :eliminado, :usuario_id, :sector_id) RETURNING id";
         try (var con = sql2o.open()) {
-            return con.createQuery(sql)
-                    .bind(tarea)
+            Integer id = con.createQuery(sql)
+                    .addParameter("titulo", tarea.getTitulo())
+                    .addParameter("descripcion", tarea.getDescripcion())
+                    .addParameter("fechacreacion", tarea.getFechacreacion())
+                    .addParameter("fechavencimiento", tarea.getFechavencimiento())
+                    .addParameter("estado", tarea.getEstado())
+                    .addParameter("ubicacion", tarea.getUbicacion())
+                    .addParameter("eliminado", tarea.isEliminado())
+                    .addParameter("usuario_id", tarea.getUsuario_id())
+                    .addParameter("sector_id", tarea.getSector_id())
                     .executeScalar(Integer.class);
+            tarea.setId(id);
+            return tarea;
         }
     }
+
+
 
 
 
