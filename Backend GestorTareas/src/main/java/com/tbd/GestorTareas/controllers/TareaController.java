@@ -52,5 +52,11 @@ public class TareaController {
         System.out.println("➡️ Controller: llegó la petición por sector");
         return tareaService.obtenerTareasPorSector(nick);
     }
+
+    @GetMapping("/tareas-realizadas-sector")
+    public List<TareasRealizadasUsuariosSectorDTO> getTareasRealizadasSector() {
+        System.out.println("➡️ Controller: llego la peticion de realizadas sector");
+        return tareaService.obtenerTareasRealizadasUsuariosSector();
+    }
 }
 
