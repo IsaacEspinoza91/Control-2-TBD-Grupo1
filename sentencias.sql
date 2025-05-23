@@ -38,6 +38,25 @@ WHERE
 	AND t.estado = 'pendiente' AND t.eliminado = false
 ORDER BY distancia_metros ASC LIMIT 1;
 
+-- 3. ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario? [Emir]
+SELECT
+    u.id AS usuario_id,
+    u.nombre AS nombre_usuario,
+    u.apellido AS apellido_usuario,	
+    AVG(ST_Distance(t.ubicacion, ST_GeographyFromText(
+        CONCAT('SRID=4326;POINT(', :longitud, ' ', :latitud, ')')
+    ))) AS promedio_distancia
+FROM
+    tarea t
+JOIN
+    usuario u ON t.usuario_id = u.id
+WHERE
+    t.estado = 'realizada'
+GROUP BY
+    u.id, u.nombre
+ORDER BY
+    u.id;
+
 -- [Bastián]
 -- ¿Cuál es el sector con más tareas completadas en un radio de 2 kilómetros del usuario?
 

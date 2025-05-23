@@ -125,4 +125,9 @@ public class UsuarioService {
         return usuarioRepository.obtenerPromedioDistanciaPorUsuario();
     }
 
+    //consulta 3
+    public List<UsuarioDistanciaDTO> obtenerPromedioDistancia(double longitud, double latitud) {
+        return usuarioRepository.calcularPromedioDistanciaTareasRealizadas(longitud, latitud);
+    }
+
 }

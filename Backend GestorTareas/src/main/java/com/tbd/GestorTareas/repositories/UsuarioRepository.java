@@ -272,4 +272,30 @@ public class UsuarioRepository {
         }
     }
 
+    //consulta 3
+    public List<UsuarioDistanciaDTO> calcularPromedioDistanciaTareasRealizadas(double longitud, double latitud) {
+        String sql = """
+            SELECT 
+                u.id AS usuarioId,
+                u.nombre AS nombreUsuario,
+                u.apellido AS apellidoUsuario,
+                AVG(ST_Distance(
+                    t.ubicacion, 
+                    ST_GeographyFromText(CONCAT('SRID=4326;POINT(', :longitud, ' ', :latitud, ')'))
+                )) AS promedioDistancia
+            FROM tarea t
+            JOIN usuario u ON t.usuario_id = u.id
+            WHERE t.estado = 'realizada'
+            GROUP BY u.id, u.nombre, u.apellido
+            ORDER BY u.id
+        """;
+
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("longitud", longitud)
+                    .addParameter("latitud", latitud)
+                    .executeAndFetch(UsuarioDistanciaDTO.class);
+        }
+    }
+
 }

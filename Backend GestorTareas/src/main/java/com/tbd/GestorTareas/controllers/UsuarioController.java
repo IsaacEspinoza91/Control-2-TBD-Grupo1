@@ -85,4 +85,12 @@ public class UsuarioController {
         List<UsuarioDistanciaDTO> resultados = usuarioService.obtenerPromedioDistanciaPorUsuario();
         return ResponseEntity.ok(resultados);
     }
+
+    //consulta 3
+    @GetMapping("/promedio-de-distancia")
+    public List<UsuarioDistanciaDTO> obtenerPromedioDeDistancia(
+            @RequestParam double longitud,
+            @RequestParam double latitud) {
+        return usuarioService.obtenerPromedioDistancia(longitud, latitud);
+    }
 }
