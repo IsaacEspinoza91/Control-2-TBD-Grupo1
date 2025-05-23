@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isAuthenticated = computed(() => !!token.value)
     const userRole = computed(() => user.value?.tipoUsuario || null)
+    const userId = computed(() => user.value?.idUsuario || null)
 
     async function login(credentials) {
         try {
@@ -19,7 +20,8 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = {
                 emailOrNick: credentials.emailOrNick,
                 tipoUsuario: data.tipoUsuario,
-                nombreUsuario: data.nombreUsuario
+                nombreUsuario: data.nombreUsuario,
+                idUsuario: data.idUsuario
             }
 
             localStorage.setItem('token', data.token)
@@ -65,5 +67,5 @@ export const useAuthStore = defineStore('auth', () => {
         router.push('/home')
     }
 
-    return { token, user, isAuthenticated, userRole, login, register, logout }
+    return { token, user, isAuthenticated, userRole, userId, login, register, logout }
 })
