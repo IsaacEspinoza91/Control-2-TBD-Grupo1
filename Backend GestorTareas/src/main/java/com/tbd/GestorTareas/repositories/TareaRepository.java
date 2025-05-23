@@ -1,6 +1,6 @@
 package com.tbd.GestorTareas.repositories;
 
-
+import com.tbd.GestorTareas.DTO.TareasRealizadasUsuariosSectorDTO;
 import com.tbd.GestorTareas.DTO.TareasPendientesPorSectorDTO;
 import com.tbd.GestorTareas.DTO.TareasPorSectorDTO;
 import com.tbd.GestorTareas.entities.Tarea;
