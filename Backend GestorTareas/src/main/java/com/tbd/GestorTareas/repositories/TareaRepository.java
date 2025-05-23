@@ -117,5 +117,21 @@ public class TareaRepository {
         }
     }
 
+    // sentencia 6 williams
+    public List<TareasRealizadasUsuariosSectorDTO> contarTareasRealizadasUsuariosSector() {
+        String sql = """
+                SELECT U.rut, U.nombre, U.apellido, COUNT(*) AS total_tareas_hechas, T.sector_id
+                FROM usuario U
+                JOIN tarea T ON U.id = T.usuario_id
+                WHERE T.estado = 'realizada'
+                GROUP BY U.rut, U.nombre, U.apellido, T.sector_id
+                ORDER BY U.rut;
+                """;
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .executeAndFetch(TareasRealizadasUsuariosSectorDTO.class);
+        }
+    }
+    
 
 }
