@@ -48,4 +48,8 @@ public class TareaService {
     public List<TareasPorSectorDTO> obtenerTareasPorSector(String nick) {
         return tareaRepository.contarTareasPorSectorPorNick(nick);
     }
+
+    public List<TareasRealizadasUsuariosSectorDTO> obtenerTareasRealizadasUsuariosSector() {
+        return tareaRepository.contarTareasRealizadasUsuariosSector();
+    }
 }
