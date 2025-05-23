@@ -118,3 +118,22 @@ FROM
 ORDER BY
     tc.tareas_completadas DESC
     LIMIT 1;
+    
+-- 9. ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario? [Emir]
+SELECT
+    u.id AS usuario_id,
+    u.nombre AS nombre_usuario,
+	u.apellido AS apellido_usuario,
+    AVG(ST_Distance(t.ubicacion, ST_GeographyFromText(ST_AsText(u.ubicacion)))) AS promedio_distancia
+FROM
+    tarea t
+JOIN
+    usuario u ON t.usuario_id = u.id
+WHERE
+    t.estado = 'realizada'
+GROUP BY
+    u.id, u.nombre, u.apellido
+ORDER BY
+    u.id;
+
+

@@ -15,6 +15,14 @@
 3\. ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?
 9\. ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?
 
+Primero se extrae el id, el nombre y el apellido de cada usuario. 
+Luego, se calcula el promedio de distancia entre la ubicación donde se realizó cada tarea y la ubicación registrada del usuario. 
+Se usa la función ST_Distance, que calcula la distancia entre dos puntos geográficos. 
+Como la ubicación del usuario puede estar en formato geometry, primero se transforma a texto con ST_AsText y luego a geography con ST_GeographyFromText.
+Luego se une la tabla tarea con la tabla usuario mediante el id del usuario para acceder a sus datos y se filtran las tareas para considerar solo las que tienen estado "realizada".
+Luego se agrupan las tareas por usuario para calcular el promedio de distancia por cada usuario y se ordenan los resultados por id de usuario de menor a mayor.
+
+
 ---
 
 **Grupo de tareas N°4: Distribución y conteo por sector [Omar]**
