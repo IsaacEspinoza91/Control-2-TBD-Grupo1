@@ -2,6 +2,7 @@ package com.tbd.GestorTareas.controllers;
 
 import com.tbd.GestorTareas.DTO.TareasPendientesPorSectorDTO;
 import com.tbd.GestorTareas.DTO.TareasPorSectorDTO;
+import com.tbd.GestorTareas.entities.Tarea;
 import com.tbd.GestorTareas.services.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,26 @@ public class TareaController {
         this.tareaService = tareaService;
     }
 
+    @GetMapping("/{id}")
+    public Tarea getTareaById(@PathVariable Long id) {
+        return tareaService.obtenerPorId(id);
+    }
 
+    @PostMapping
+    public Long createTarea(@RequestBody Tarea tarea) {
+        return tareaService.crearTarea(tarea);
+    }
+
+    @PutMapping("/{id}")
+    public void updateTarea(@PathVariable Long id, @RequestBody Tarea tarea) {
+        tarea.setId(id);
+        tareaService.actualizarTarea(tarea);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTarea(@PathVariable Long id) {
+        tareaService.eliminarTarea(id);
+    }
 
     @GetMapping("/pendientes-por-sector")
     public List<TareasPendientesPorSectorDTO> getTareasPendientesPorSector() {
