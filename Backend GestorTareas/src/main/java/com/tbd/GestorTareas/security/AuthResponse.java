@@ -4,11 +4,13 @@ public class AuthResponse {
     private String token;
     private String tipoUsuario;
     private String nombreUsuario;
+    private Integer idUsuario;
 
-    public AuthResponse(String token, String tipoUsuario, String nombreUsuario) {
+    public AuthResponse(String token, String tipoUsuario, String nombreUsuario, Integer idUsuario) {
         this.token = token;
         this.tipoUsuario = tipoUsuario;
         this.nombreUsuario = nombreUsuario;
+        this.idUsuario = idUsuario;
     }
 
     // Getters
@@ -22,5 +24,9 @@ public class AuthResponse {
 
     public String getNombreUsuario() {
         return nombreUsuario;
+    }
+
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 }

@@ -74,7 +74,7 @@ public class AuthController {
             // Generacion de token
             String jwtToken = jwtService.generateToken(new UserDetailsImpl(usuarioRegistrado));
 
-            return ResponseEntity.ok(new AuthResponse(jwtToken, usuarioRegistrado.getTipo(), usuarioRegistrado.getNick()));
+            return ResponseEntity.ok(new AuthResponse(jwtToken, usuarioRegistrado.getTipo(), usuarioRegistrado.getNick(), usuarioRegistrado.getId()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error durante el registro: " + e.getMessage());
@@ -90,7 +90,7 @@ public class AuthController {
             // Generacion de token
             String jwtToken = jwtService.generateToken(new UserDetailsImpl(usuarioAutenticado));
 
-            return ResponseEntity.ok(new AuthResponse(jwtToken, usuarioAutenticado.getTipo(), usuarioAutenticado.getNick()));
+            return ResponseEntity.ok(new AuthResponse(jwtToken, usuarioAutenticado.getTipo(), usuarioAutenticado.getNick(), usuarioAutenticado.getId()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
