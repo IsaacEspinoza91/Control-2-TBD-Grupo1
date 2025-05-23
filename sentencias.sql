@@ -79,3 +79,42 @@ ORDER BY
     tc.tareas_completadas DESC
     LIMIT 1;
 
+-- ¿Cuál es el sector con más tareas completadas dentro de un radio de 5 km desde la ubicación del usuario?
+
+WITH usuario_referencia AS (
+    SELECT
+        id,
+        ubicacion
+    FROM
+        usuario
+    WHERE
+        id = :usuarioId  -- Cambia por el ID del usuario que interesa
+),
+     tareas_cercanas AS (
+         SELECT
+             t.sector_id,
+             COUNT(*) AS tareas_completadas
+         FROM
+             tarea t
+                 JOIN
+             usuario_referencia u ON ST_DWithin(
+                     t.ubicacion::geography,
+                     u.ubicacion::geography,
+                     5000  -- 5000 metros = 5 km
+                                     )
+         WHERE
+             t.estado = 'realizada'
+         GROUP BY
+             t.sector_id
+     )
+SELECT
+    s.id AS sector_id,
+    s.nombre AS sector_nombre,
+    tc.tareas_completadas
+FROM
+    sector s
+        JOIN
+    tareas_cercanas tc ON s.id = tc.sector_id
+ORDER BY
+    tc.tareas_completadas DESC
+    LIMIT 1;
