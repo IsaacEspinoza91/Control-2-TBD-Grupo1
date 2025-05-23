@@ -2,6 +2,7 @@ package com.tbd.GestorTareas.repositories;
 
 
 import com.tbd.GestorTareas.entities.Usuario;
+import com.tbd.GestorTareas.DTO.SectorConMasTareasRealizadasCercanasDTO;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,67 @@ public class UsuarioRepository {
             return con.createQuery(sql)
                     .addParameter("rut", rut)
                     .executeScalar(Boolean.class);
+        }
+    }
+
+    public SectorConMasTareasRealizadasCercanasDTO encontrarSectorConMasTareasRealizadasCercanas(Long usuarioId, Double radioKm) {
+        int radioMetros = (int)(radioKm * 1000);
+
+        String sql = """
+            WITH usuario_referencia AS (
+                SELECT 
+                    id,
+                    ubicacion
+                FROM 
+                    usuario
+                WHERE 
+                    id = :usuarioId
+            ),
+            tareas_cercanas AS (
+                SELECT 
+                    t.sector_id,
+                    COUNT(*) AS tareas_realizadas
+                FROM 
+                    tarea t
+                JOIN 
+                    usuario_referencia u ON ST_DWithin(
+                        t.ubicacion::geography, 
+                        u.ubicacion::geography, 
+                        :radioMetros
+                    )
+                WHERE 
+                    t.estado = 'realizada'
+                    AND t.eliminado = false
+                GROUP BY 
+                    t.sector_id
+            )
+            SELECT 
+                s.id AS sectorId,
+                s.nombre AS sectorNombre,
+                tc.tareas_realizadas AS tareasRealizadas,
+                :radioKm AS radioKm
+            FROM 
+                sector s
+            JOIN 
+                tareas_cercanas tc ON s.id = tc.sector_id
+            ORDER BY 
+                tc.tareas_realizadas DESC
+            LIMIT 1;
+        """;
+
+        try (Connection con = sql2o.open()) {
+            SectorConMasTareasRealizadasCercanasDTO resultado = con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .addParameter("radioMetros", radioMetros)
+                    .addParameter("radioKm", radioKm)
+                    .executeAndFetchFirst(SectorConMasTareasRealizadasCercanasDTO.class);
+
+            if (resultado == null) {
+                resultado = new SectorConMasTareasRealizadasCercanasDTO();
+                resultado.setRadioKm(radioKm);
+            }
+
+            return resultado;
         }
     }
 }

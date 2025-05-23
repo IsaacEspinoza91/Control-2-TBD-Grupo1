@@ -1,6 +1,7 @@
 package com.tbd.GestorTareas.services;
 
 import com.tbd.GestorTareas.entities.Usuario;
+import com.tbd.GestorTareas.DTO.SectorConMasTareasRealizadasCercanasDTO;
 import com.tbd.GestorTareas.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,5 +59,14 @@ public class UsuarioService {
     // Verificar rut no usado. Permite validacion previa al registro
     public Boolean existsByRut(String rut) {
         return usuarioRepository.existsByRut(rut);
+    }
+
+    public SectorConMasTareasRealizadasCercanasDTO obtenerSectorConMasTareasRealizadasEn2Km(Long usuarioId) {
+        return usuarioRepository.encontrarSectorConMasTareasRealizadasCercanas(usuarioId, 2.0);
+    }
+
+    // Para futuro uso con 5km
+    public SectorConMasTareasRealizadasCercanasDTO obtenerSectorConMasTareasRealizadasEn5Km(Long usuarioId) {
+        return usuarioRepository.encontrarSectorConMasTareasRealizadasCercanas(usuarioId, 5.0);
     }
 }
