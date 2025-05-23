@@ -1,11 +1,10 @@
 package com.tbd.GestorTareas.controllers;
 
-import com.tbd.GestorTareas.DTO.TareasRealizadasUsuariosSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPendientesPorSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPorSectorDTO;
+import com.tbd.GestorTareas.DTO.*;
 import com.tbd.GestorTareas.entities.Tarea;
 import com.tbd.GestorTareas.services.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,6 +57,29 @@ public class TareaController {
     public List<TareasRealizadasUsuariosSectorDTO> getTareasRealizadasSector() {
         System.out.println("➡️ Controller: llego la peticion de realizadas sector");
         return tareaService.obtenerTareasRealizadasUsuariosSector();
+    }
+
+    @GetMapping("/usuario/{usuarioId}/tarea-cercana")
+    public ResponseEntity<TareaCercanaDTO> getTareaPendienteMasCercana(@PathVariable Long usuarioId) {
+        TareaCercanaDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
+
+        // Caso tarea no existe
+        if (tarea == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(tarea);
+    }
+
+    @PostMapping("/tarea-cercana")
+    public ResponseEntity<TareaCercanaDTO> getTareaPendienteMasCercana(@RequestBody TareaCercanaRequest request) {
+        TareaCercanaDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
+
+        if (tarea == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(tarea);
     }
 }
 

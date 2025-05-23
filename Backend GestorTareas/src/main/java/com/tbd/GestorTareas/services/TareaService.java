@@ -1,8 +1,6 @@
 package com.tbd.GestorTareas.services;
 
-import com.tbd.GestorTareas.DTO.TareasRealizadasUsuariosSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPendientesPorSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPorSectorDTO;
+import com.tbd.GestorTareas.DTO.*;
 import com.tbd.GestorTareas.entities.Tarea;
 import com.tbd.GestorTareas.repositories.TareaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +50,26 @@ public class TareaService {
 
     public List<TareasRealizadasUsuariosSectorDTO> obtenerTareasRealizadasUsuariosSector() {
         return tareaRepository.contarTareasRealizadasUsuariosSector();
+    }
+
+    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
+        return tareaRepository.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
+    }
+
+    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
+        // Validacion coordenadas
+        if (request.getLat() == null || request.getLng() == null) {
+            throw new IllegalArgumentException("Las coordenadas son requeridas");
+        }
+
+        if (request.getLat() < -90 || request.getLat() > 90) {
+            throw new IllegalArgumentException("Latitud debe estar entre -90 y 90");
+        }
+
+        if (request.getLng() < -180 || request.getLng() > 180) {
+            throw new IllegalArgumentException("Longitud debe estar entre -180 y 180");
+        }
+
+        return tareaRepository.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
     }
 }

@@ -18,3 +18,17 @@ POST, URL: http://localhost:8080/api/auth/register
     "nick": "mike_prision1",
     "tipo": "admin"
 }
+
+
+
+Sentencias:
+1. POST: http://localhost:8080/api/tarea/tarea-cercana
+{
+    "usuarioId": 2,
+    "lng": -70.6700,
+    "lat": -33.4200
+}
+
+2. GET: http://localhost:8080/api/tarea/usuario/2/tarea-cercana
+
+

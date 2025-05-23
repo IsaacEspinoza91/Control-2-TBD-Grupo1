@@ -45,3 +45,7 @@ CREATE TABLE notificacion (
 
 -- Índice para búsquedas por email/nick (login)
 CREATE INDEX idx_usuario_login ON usuario(email, nick);
+
+-- Índices búsqueda de tareas segun ubicacion
+CREATE INDEX idx_tarea_ubicacion ON tarea USING GIST(ubicacion);
+CREATE INDEX idx_usuario_ubicacion ON usuario USING GIST(ubicacion);

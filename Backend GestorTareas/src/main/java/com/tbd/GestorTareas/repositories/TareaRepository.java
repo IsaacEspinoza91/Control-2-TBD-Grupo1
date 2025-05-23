@@ -1,8 +1,6 @@
 package com.tbd.GestorTareas.repositories;
 
-import com.tbd.GestorTareas.DTO.TareasRealizadasUsuariosSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPendientesPorSectorDTO;
-import com.tbd.GestorTareas.DTO.TareasPorSectorDTO;
+import com.tbd.GestorTareas.DTO.*;
 import com.tbd.GestorTareas.entities.Tarea;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -132,6 +130,57 @@ public class TareaRepository {
                     .executeAndFetch(TareasRealizadasUsuariosSectorDTO.class);
         }
     }
-    
+
+
+
+    // Sentencia 2 ISAAC
+    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
+        String sql = """
+                SELECT
+                    t.id, 
+                    t.titulo, 
+                    t.descripcion, 
+                    s.nombre AS sector, 
+                    ST_Distance(t.ubicacion::geography, u.ubicacion::geography) AS distanciaMetros 
+                FROM tarea AS t 
+                    JOIN usuario AS u ON t.usuario_id = u.id 
+                    LEFT JOIN sector AS s ON t.sector_id = s.id 
+                WHERE u.id = :usuarioId 
+                    AND t.estado = 'pendiente' AND t.eliminado = false 
+                ORDER BY distanciaMetros ASC LIMIT 1;
+                """;
+
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .executeAndFetchFirst(TareaCercanaDTO.class);
+        }
+    }
+
+    // Sentencia 1 ISAAC
+    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
+        String sql = """
+                SELECT
+                    t.id, 
+                    t.titulo, 
+                    t.descripcion, 
+                    s.nombre AS sector, 
+                    ST_Distance(t.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS distanciaMetros 
+                FROM tarea AS t 
+                    JOIN usuario AS u ON t.usuario_id = u.id 
+                    LEFT JOIN sector AS s ON t.sector_id = s.id 
+                WHERE u.id = :usuarioId 
+                    AND t.estado = 'pendiente' AND t.eliminado = false 
+                ORDER BY distanciaMetros ASC LIMIT 1;
+                """;
+
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("usuarioId", request.getUsuarioId())
+                    .addParameter("lng", request.getLng())
+                    .addParameter("lat", request.getLat())
+                    .executeAndFetchFirst(TareaCercanaDTO.class);
+        }
+    }
 
 }
