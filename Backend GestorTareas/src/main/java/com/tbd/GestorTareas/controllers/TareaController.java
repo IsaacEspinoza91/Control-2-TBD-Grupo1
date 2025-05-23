@@ -26,12 +26,12 @@ public class TareaController {
     }
 
     @PostMapping
-    public Long createTarea(@RequestBody Tarea tarea) {
+    public Integer createTarea(@RequestBody Tarea tarea) {
         return tareaService.crearTarea(tarea);
     }
 
     @PutMapping("/{id}")
-    public void updateTarea(@PathVariable Long id, @RequestBody Tarea tarea) {
+    public void updateTarea(@PathVariable Integer id, @RequestBody Tarea tarea) {
         tarea.setId(id);
         tareaService.actualizarTarea(tarea);
     }

@@ -3,39 +3,41 @@ package com.tbd.GestorTareas.entities;
 import java.time.LocalDate;
 
 public class Tarea {
-    private Long id;
+    private Integer id;
     private String titulo;
     private String descripcion;
     private LocalDate fechacreacion;
     private LocalDate fechavencimiento;
     private String estado;
-    private String ubicacion; // WKT o GeoJSON, según cómo lo manejes en Java
+    private String ubicacion; // Almacenaremos el WKT del punto
     private boolean eliminado;
     private Long usuario_id;
     private Long sector_id;
 
-    public Tarea(String titulo, String descripcion, LocalDate fechacreacion, LocalDate fechavencimiento, String estado, String ubicacion, boolean eliminado, Long usuario_id, Long sector_id) {
+    // Constructores
+    public Tarea() {}
+
+    public Tarea(String titulo, String descripcion, LocalDate fechacreacion, LocalDate fechavencimiento,
+                 String estado, Double latitud, Double longitud,
+                 boolean eliminado, Long usuario_id, Long sector_id) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fechacreacion = fechacreacion;
         this.fechavencimiento = fechavencimiento;
         this.estado = estado;
-        this.ubicacion = ubicacion;
+        setUbicacion(latitud, longitud); // genera el WKT
         this.eliminado = eliminado;
         this.usuario_id = usuario_id;
         this.sector_id = sector_id;
     }
 
-    public Tarea() {
-    }
-
     // Getters y Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -85,6 +87,13 @@ public class Tarea {
 
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
+    }
+
+    // Set WKT desde latitud y longitud
+    public void setUbicacion(Double latitud, Double longitud) {
+        if (latitud != null && longitud != null) {
+            this.ubicacion = String.format("POINT(%f %f)", longitud, latitud).replace(",", ".");
+        }
     }
 
     public boolean isEliminado() {

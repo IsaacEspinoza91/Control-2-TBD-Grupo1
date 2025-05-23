@@ -27,7 +27,7 @@ public class TareaService {
         return tareaRepository.findById(id);
     }
 
-    public Long crearTarea(Tarea tarea) {
+    public Integer crearTarea(Tarea tarea) {
         return tareaRepository.save(tarea);
     }
 

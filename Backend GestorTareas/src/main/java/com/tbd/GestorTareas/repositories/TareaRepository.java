@@ -35,16 +35,17 @@ public class TareaRepository {
         }
     }
 
-    public Long save(Tarea tarea) {
+    public Integer save(Tarea tarea) {
         String sql = "INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id) " +
-                "VALUES (:titulo, :descripcion, :fechacreacion, :fechavencimiento, :estado, :ubicacion, :eliminado, :usuarioId, :sectorId)";
+                "VALUES (:titulo, :descripcion, :fechacreacion, :fechavencimiento, :estado, :ubicacion::geography, :eliminado, :usuario_id, :sector_id) RETURNING id";
         try (var con = sql2o.open()) {
-            return (Long) con.createQuery(sql, true)
+            return con.createQuery(sql)
                     .bind(tarea)
-                    .executeUpdate()
-                    .getKey();
+                    .executeScalar(Integer.class);
         }
     }
+
+
 
     public void update(Tarea tarea) {
         String sql = "UPDATE tarea SET titulo = :titulo, descripcion = :descripcion, fechacreacion = :fechacreacion, " +
