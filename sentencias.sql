@@ -38,3 +38,44 @@ WHERE
 	AND t.estado = 'pendiente' AND t.eliminado = false
 ORDER BY distancia_metros ASC LIMIT 1;
 
+-- [Bastián]
+-- ¿Cuál es el sector con más tareas completadas en un radio de 2 kilómetros del usuario?
+
+WITH usuario_referencia AS (
+    SELECT
+        id,
+        ubicacion
+    FROM
+        usuario
+    WHERE
+        id = :usuarioId  -- Cambiar por el ID del usuario que interesa
+),
+     tareas_cercanas AS (
+         SELECT
+             t.sector_id,
+             COUNT(*) AS tareas_completadas
+         FROM
+             tarea t
+                 JOIN
+             usuario_referencia u ON ST_DWithin(
+                     t.ubicacion::geography,
+                     u.ubicacion::geography,
+                     2000  -- 2000 metros = 2 km
+                                     )
+         WHERE
+             t.estado = 'realizada'
+         GROUP BY
+             t.sector_id
+     )
+SELECT
+    s.id AS sector_id,
+    s.nombre AS sector_nombre,
+    tc.tareas_completadas
+FROM
+    sector s
+        JOIN
+    tareas_cercanas tc ON s.id = tc.sector_id
+ORDER BY
+    tc.tareas_completadas DESC
+    LIMIT 1;
+
