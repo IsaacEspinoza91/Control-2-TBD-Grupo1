@@ -29,7 +29,7 @@ CREATE TABLE tarea (
     fechacreacion DATE,
     fechavencimiento DATE,
     estado VARCHAR(50),
-    ubicacion GEOGRAPHY(POINT, 4326),
+    ubicacion GEOMETRY(POINT, 4326),
     eliminado BOOLEAN,
     usuario_id INTEGER REFERENCES usuario(id),
     sector_id INTEGER REFERENCES sector(id)  -- asociación con sector
