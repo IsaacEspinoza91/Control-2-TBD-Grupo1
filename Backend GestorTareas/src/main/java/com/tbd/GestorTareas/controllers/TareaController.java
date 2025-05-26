@@ -4,6 +4,7 @@ import com.tbd.GestorTareas.DTO.*;
 import com.tbd.GestorTareas.entities.Tarea;
 import com.tbd.GestorTareas.services.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,20 +21,25 @@ public class TareaController {
         this.tareaService = tareaService;
     }
 
+    @GetMapping("/")
+    public List<TareaResponseDTO> getAllTareas() {
+        return tareaService.obtenerTodas();
+    }
+
     @GetMapping("/{id}")
-    public Tarea getTareaById(@PathVariable Long id) {
+    public TareaResponseDTO getTareaById(@PathVariable Long id) {
         return tareaService.obtenerPorId(id);
     }
 
-    @PostMapping
-    public Tarea createTarea(@RequestBody Tarea tarea) {
+    @PostMapping("/")
+    public TareaResponseDTO createTarea(@RequestBody TareaRequestDTO tarea) {
         return tareaService.crearTarea(tarea);
     }
 
     @PutMapping("/{id}")
-    public void updateTarea(@PathVariable Integer id, @RequestBody Tarea tarea) {
-        tarea.setId(id);
-        tareaService.actualizarTarea(tarea);
+    public TareaResponseDTO updateTarea(@PathVariable Long id, @RequestBody TareaRequestDTO tarea) {
+        TareaResponseDTO updatedTarea = tareaService.actualizarTarea(id, tarea);
+        return updatedTarea;
     }
 
     @DeleteMapping("/{id}")
@@ -80,6 +86,58 @@ public class TareaController {
         }
 
         return ResponseEntity.ok(tarea);
+    }
+
+
+
+    // Nuevos metodos
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<TareaResponseDTO>> getTareasByUsuarioId(@PathVariable Long usuarioId) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasByUsuarioId(usuarioId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
+
+    // Obtener todas las tareas de la semana actual del usuario segun id usuario
+    @GetMapping("/usuario/semana-actual/{usuarioId}")
+    public ResponseEntity<List<TareaResponseDTO>> getTareasCurrentWeekByUsuarioId(@PathVariable Long usuarioId) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasSemanaActualByUsuarioId(usuarioId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
+
+    // Obtener todas las tareas completadas del usuario segun id usuario
+    @GetMapping("/usuario/completadas/{usuarioId}")
+    public ResponseEntity<List<TareaResponseDTO>> getCompletedTareasByUsuarioId(@PathVariable Long usuarioId) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasCompletadasByUsuarioId(usuarioId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
+
+    // Obtener todas las tareas proximas del usuario sin completar segun id usuario
+    @GetMapping("/usuario/proximas-incompletas/{usuarioId}")
+    public ResponseEntity<List<TareaResponseDTO>> getUpcomingUncompletedTareasByUsuarioId(@PathVariable Long usuarioId) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasPendientesProximasByUsuarioId(usuarioId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
+
+    // Cambiar estado de tareas de "realizada" a "pendiente" segun id de tarea
+    @PatchMapping("/marcar-pendiente/{id}")
+    public ResponseEntity<Void> changeEstadoToPendiente(@PathVariable Long id) {
+        boolean updated = tareaService.cambiarEstadoAPendiente(id);
+        return updated ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // Cambiar estado de tareas de "pendiente" a "realizada" segun id de tarea
+    @PatchMapping("marcar-realizada/{id}")
+    public ResponseEntity<Void> changeEstadoToRealizada(@PathVariable Long id) {
+        boolean updated = tareaService.cambiarEstadoARealizada(id);
+        return updated ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // Cambiar bool de eliminado de una tarea segun id de tarea
+    @PatchMapping("/eliminar/{id}")
+    public ResponseEntity<Void> toggleEliminado(@PathVariable Long id) {
+        boolean updated = tareaService.cambiarEstadoEliminado(id);
+        return updated ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
 

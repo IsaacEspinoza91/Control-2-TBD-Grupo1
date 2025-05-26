@@ -18,14 +18,13 @@ public class Tarea {
     public Tarea() {}
 
     public Tarea(String titulo, String descripcion, LocalDate fechacreacion, LocalDate fechavencimiento,
-                 String estado, Double latitud, Double longitud,
-                 boolean eliminado, Long usuario_id, Long sector_id) {
+                 String estado, String ubicacion, boolean eliminado, Long usuario_id, Long sector_id) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fechacreacion = fechacreacion;
         this.fechavencimiento = fechavencimiento;
         this.estado = estado;
-        setUbicacion(latitud, longitud); // genera el WKT
+        this.ubicacion = ubicacion;
         this.eliminado = eliminado;
         this.usuario_id = usuario_id;
         this.sector_id = sector_id;
@@ -89,13 +88,6 @@ public class Tarea {
         this.ubicacion = ubicacion;
     }
 
-    // Set WKT desde latitud y longitud
-    public void setUbicacion(Double latitud, Double longitud) {
-        if (latitud != null && longitud != null) {
-            this.ubicacion = String.format("POINT(%f %f)", longitud, latitud).replace(",", ".");
-        }
-    }
-
     public boolean isEliminado() {
         return eliminado;
     }
@@ -118,5 +110,21 @@ public class Tarea {
 
     public void setSector_id(Long sector_id) {
         this.sector_id = sector_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Tarea{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", fechacreacion=" + fechacreacion +
+                ", fechavencimiento=" + fechavencimiento +
+                ", estado='" + estado + '\'' +
+                ", ubicacion='" + ubicacion + '\'' +
+                ", eliminado=" + eliminado +
+                ", usuario_id=" + usuario_id +
+                ", sector_id=" + sector_id +
+                '}';
     }
 }

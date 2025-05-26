@@ -7,6 +7,9 @@ import org.sql2o.Sql2o;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Repository
@@ -20,14 +23,18 @@ public class TareaRepository {
     }
 
     public List<Tarea> findAll() {
-        String sql = "SELECT * FROM tarea WHERE eliminado = false";
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE eliminado = false";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).executeAndFetch(Tarea.class);
         }
     }
 
     public Tarea findById(Long id) {
-        String sql = "SELECT * FROM tarea WHERE id = :id AND eliminado = false";
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE id = :id AND eliminado = false";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).addParameter("id", id).executeAndFetchFirst(Tarea.class);
         }
@@ -35,9 +42,10 @@ public class TareaRepository {
 
     public Tarea save(Tarea tarea) {
         String sql = "INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id) " +
-                "VALUES (:titulo, :descripcion, :fechacreacion, :fechavencimiento, :estado, :ubicacion::geography, :eliminado, :usuario_id, :sector_id) RETURNING id";
-        try (var con = sql2o.open()) {
-            Integer id = con.createQuery(sql)
+                "VALUES (:titulo, :descripcion, :fechacreacion, :fechavencimiento, :estado, ST_GeomFromText(:ubicacion, 4326), :eliminado, :usuario_id, :sector_id)";
+
+        try (var con = sql2o.beginTransaction()) {
+            con.createQuery(sql)
                     .addParameter("titulo", tarea.getTitulo())
                     .addParameter("descripcion", tarea.getDescripcion())
                     .addParameter("fechacreacion", tarea.getFechacreacion())
@@ -47,22 +55,34 @@ public class TareaRepository {
                     .addParameter("eliminado", tarea.isEliminado())
                     .addParameter("usuario_id", tarea.getUsuario_id())
                     .addParameter("sector_id", tarea.getSector_id())
-                    .executeScalar(Integer.class);
+                    .executeUpdate();
+
+            Integer id = con.createQuery("SELECT currval('tarea_id_seq')").executeScalar(Integer.class);
             tarea.setId(id);
+            con.commit(); // Confirma la transacción
             return tarea;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar la tarea y obtener el ID", e);
         }
     }
 
 
-
-
-
     public void update(Tarea tarea) {
         String sql = "UPDATE tarea SET titulo = :titulo, descripcion = :descripcion, fechacreacion = :fechacreacion, " +
-                "fechavencimiento = :fechavencimiento, estado = :estado, ubicacion = :ubicacion, usuario_id = :usuarioId, " +
-                "sector_id = :sectorId WHERE id = :id";
+                "fechavencimiento = :fechavencimiento, estado = :estado, ubicacion = ST_GeomFromText(:ubicacion, 4326), usuario_id = :usuario_id, " +
+                "sector_id = :sector_id WHERE id = :id";
         try (var con = sql2o.open()) {
-            con.createQuery(sql).bind(tarea).executeUpdate();
+            con.createQuery(sql)
+                    .addParameter("titulo", tarea.getTitulo())
+                    .addParameter("descripcion", tarea.getDescripcion())
+                    .addParameter("fechacreacion", tarea.getFechacreacion())
+                    .addParameter("fechavencimiento", tarea.getFechavencimiento())
+                    .addParameter("estado", tarea.getEstado())
+                    .addParameter("ubicacion", tarea.getUbicacion())
+                    .addParameter("usuario_id", tarea.getUsuario_id())
+                    .addParameter("sector_id", tarea.getSector_id())
+                    .addParameter("id", tarea.getId())
+                    .executeUpdate();
         }
     }
 
@@ -137,16 +157,16 @@ public class TareaRepository {
     public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
         String sql = """
                 SELECT
-                    t.id, 
-                    t.titulo, 
-                    t.descripcion, 
-                    s.nombre AS sector, 
-                    ST_Distance(t.ubicacion::geography, u.ubicacion::geography) AS distanciaMetros 
-                FROM tarea AS t 
-                    JOIN usuario AS u ON t.usuario_id = u.id 
-                    LEFT JOIN sector AS s ON t.sector_id = s.id 
-                WHERE u.id = :usuarioId 
-                    AND t.estado = 'pendiente' AND t.eliminado = false 
+                    t.id,
+                    t.titulo,
+                    t.descripcion,
+                    s.nombre AS sector,
+                    ST_Distance(t.ubicacion::geography, u.ubicacion::geography) AS distanciaMetros
+                FROM tarea AS t
+                    JOIN usuario AS u ON t.usuario_id = u.id
+                    LEFT JOIN sector AS s ON t.sector_id = s.id
+                WHERE u.id = :usuarioId
+                    AND t.estado = 'pendiente' AND t.eliminado = false
                 ORDER BY distanciaMetros ASC LIMIT 1;
                 """;
 
@@ -161,16 +181,16 @@ public class TareaRepository {
     public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
         String sql = """
                 SELECT
-                    t.id, 
-                    t.titulo, 
-                    t.descripcion, 
-                    s.nombre AS sector, 
-                    ST_Distance(t.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS distanciaMetros 
-                FROM tarea AS t 
-                    JOIN usuario AS u ON t.usuario_id = u.id 
-                    LEFT JOIN sector AS s ON t.sector_id = s.id 
-                WHERE u.id = :usuarioId 
-                    AND t.estado = 'pendiente' AND t.eliminado = false 
+                    t.id,
+                    t.titulo,
+                    t.descripcion,
+                    s.nombre AS sector,
+                    ST_Distance(t.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS distanciaMetros
+                FROM tarea AS t
+                    JOIN usuario AS u ON t.usuario_id = u.id
+                    LEFT JOIN sector AS s ON t.sector_id = s.id
+                WHERE u.id = :usuarioId
+                    AND t.estado = 'pendiente' AND t.eliminado = false
                 ORDER BY distanciaMetros ASC LIMIT 1;
                 """;
 
@@ -179,7 +199,108 @@ public class TareaRepository {
                     .addParameter("usuarioId", request.getUsuarioId())
                     .addParameter("lng", request.getLng())
                     .addParameter("lat", request.getLat())
-                    .executeAndFetchFirst(TareaCercanaDTO.class);
+                    .executeAndFetchFirst(TareaCercanaDTO.class); // TareaCercanaDTO debe manejar el WKT
+        }
+    }
+
+
+
+    // Nuevos metodos para trabajar el front
+
+    // Obtener todas las tareas de un usuario según id
+    public List<Tarea> findByUsuarioId(Long usuarioId) {
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false";
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
+        }
+    }
+
+    // Obtener todas las tareas de la semana actual del usuario según id usuario
+    public List<Tarea> findTareasSemanaActualByUsuarioId(Long usuarioId) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)); // Lunes
+        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));     // Domingo
+
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false " +
+                "AND fechavencimiento BETWEEN :startDate AND :endDate";
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .addParameter("startDate", startOfWeek)
+                    .addParameter("endDate", endOfWeek)
+                    .executeAndFetch(Tarea.class);
+        }
+    }
+
+    // Obtener todas las tareas completadas del usuario según id usuario
+    public List<Tarea> findTareasCompletadasByUsuarioId(Long usuarioId) {
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'realizada' AND eliminado = false";
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
+        }
+    }
+
+    // Obtener todas las tareas próximas del usuario sin completar según id usuario
+    public List<Tarea> findTareasPendientesProximasByUsuarioId(Long usuarioId) {
+        LocalDate today = LocalDate.now();
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado != 'realizada' AND eliminado = false " +
+                "AND fechavencimiento >= :today ORDER BY fechavencimiento ASC";
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .addParameter("today", today)
+                    .executeAndFetch(Tarea.class);
+        }
+    }
+
+    // Cambiar estado de tareas de "realizada" a "pendiente" según id de tarea
+    public boolean cambiarEstadoAPendiente(Long tareaId) {
+        String sql = "UPDATE tarea SET estado = 'pendiente' WHERE id = :tareaId AND estado = 'realizada'";
+        try (var con = sql2o.open()) {
+            int rowsAffected = con.createQuery(sql).addParameter("tareaId", tareaId).executeUpdate().getResult();
+            return rowsAffected > 0;
+        }
+    }
+
+    // Cambiar estado de tareas de "pendiente" a "realizada" según id de tarea
+    public boolean cambiarEstadoARealizada(Long tareaId) {
+        String sql = "UPDATE tarea SET estado = 'realizada' WHERE id = :tareaId AND estado = 'pendiente'";
+        try (var con = sql2o.open()) {
+            int rowsAffected = con.createQuery(sql).addParameter("tareaId", tareaId).executeUpdate().getResult();
+            return rowsAffected > 0;
+        }
+    }
+
+    // Cambiar bool de eliminado de una tarea según id de tarea
+    public boolean cambiarEstadoDeEliminado(Long tareaId) {
+        String selectSql = "SELECT eliminado FROM tarea WHERE id = :tareaId";
+        try (var con = sql2o.open()) {
+            Boolean currentEliminado = con.createQuery(selectSql)
+                    .addParameter("tareaId", tareaId)
+                    .executeScalar(Boolean.class);
+
+            if (currentEliminado == null) {
+                return false; // La tarea no existe
+            }
+
+            // Actualizar al valor opuesto -> !currentEliminado
+            String updateSql = "UPDATE tarea SET eliminado = :newEliminado WHERE id = :tareaId";
+            int rowsAffected = con.createQuery(updateSql)
+                    .addParameter("newEliminado", !currentEliminado)
+                    .addParameter("tareaId", tareaId)
+                    .executeUpdate().getResult();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
