@@ -11,58 +11,33 @@
           <div class="d-flex align-items-center mb-2">
             <!-- Botón desplegable más ancho -->
             <div class="dropdown me-2 flex-grow-1">
-              <button
-                class="btn btn-outline-primary dropdown-toggle w-100"
-                type="button"
-                @click="toggleDropdown"
-                aria-expanded="false"
-                style="text-align: left;"
-              >
+              <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" @click="toggleDropdown"
+                aria-expanded="false" style="text-align: left;">
                 Consultas
               </button>
               <ul v-if="showDropdown" class="dropdown-menu show w-100">
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="selectQuery('por-sector')"
-                  >
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('por-sector')">
                     ¿Cuántas tareas ha hecho el usuario por sector?
                   </a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="selectQuery('sector-2km')"
-                  >
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('sector-2km')">
                     ¿Cuál es el sector con más tareas completadas en un radio de 2 km del usuario?
                   </a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="selectQuery('sector-5km')"
-                  >
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('sector-5km')">
                     ¿Cuál es el sector con más tareas completadas en un radio de 5 km del usuario?
                   </a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="selectQuery('distancia-promedio-usuario')"
-                  >
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('distancia-promedio-usuario')">
                     ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?
                   </a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="selectQuery('distancia-promedio-registro')"
-                  >
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('distancia-promedio-registro')">
                     ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?
                   </a>
                 </li>
@@ -70,12 +45,8 @@
             </div>
 
             <!-- Botón Ejecutar -->
-            <button
-              class="btn btn-success flex-shrink-0"
-              @click="executeQuery"
-              :disabled="!selectedQuery"
-              style="min-width: 100px;"
-            >
+            <button class="btn btn-success flex-shrink-0" @click="executeQuery" :disabled="!selectedQuery"
+              style="min-width: 100px;">
               Ejecutar!
             </button>
           </div>
@@ -101,7 +72,8 @@
                 <div v-if="resultado.length > 0" class="alert alert-success">
                   <h6 class="mb-3">Tareas realizadas por sector:</h6>
                   <ul class="list-group">
-                    <li v-for="item in resultado" :key="item.sector" class="list-group-item d-flex justify-content-between align-items-center">
+                    <li v-for="item in resultado" :key="item.sector"
+                      class="list-group-item d-flex justify-content-between align-items-center">
                       {{ item.sector }}
                       <span class="badge bg-primary rounded-pill">{{ item.totalTareas }}</span>
                     </li>
@@ -116,7 +88,8 @@
               <div v-else-if="selectedQuery.includes('distancia-promedio')">
                 <div v-if="resultado.promedioDistancia !== undefined" class="alert alert-success">
                   <p><strong>Usuario:</strong> {{ resultado.nombreUsuario }} {{ resultado.apellidoUsuario }}</p>
-                  <p><strong>Promedio de distancia:</strong> {{ (resultado.promedioDistancia / 1000).toFixed(2) }} km</p>
+                  <p><strong>Promedio de distancia:</strong> {{ (resultado.promedioDistancia / 1000).toFixed(2) }} km
+                  </p>
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontraron resultados para esta consulta.
@@ -128,7 +101,8 @@
                 <div v-if="resultado.sectorId" class="alert alert-success">
                   <p class="mb-1"><strong>Sector:</strong> {{ resultado.sectorNombre }}</p>
                   <p class="mb-1"><strong>Tareas realizadas:</strong> {{ resultado.tareasRealizadas }}</p>
-                  <p class="mb-0"><strong>Radio de búsqueda:</strong> {{ resultado.radioKm || (selectedQuery === 'sector-2km' ? '2' : '5') }} km</p>
+                  <p class="mb-0"><strong>Radio de búsqueda:</strong> {{ resultado.radioKm || (selectedQuery ===
+                    'sector-2km' ? '2' : '5') }} km</p>
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontraron resultados para esta consulta.
@@ -144,53 +118,8 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-8">
-            <div class="card mb-4">
-              <div class="card-body">
-                <h2>Tareas del día</h2>
-                <div v-if="loadingTareas" class="text-center py-2">
-                  <div class="spinner-border text-primary spinner-border-sm" role="status">
-                    <span class="visually-hidden">Cargando tareas...</span>
-                  </div>
-                  <small class="ms-2">Cargando tareas...</small>
-                </div>
-                <ul v-else-if="tareasUsuario.length > 0">
-                  <li v-for="tarea in tareasUsuario" :key="tarea.id">
-                    <strong>{{ tarea.titulo }}</strong>: {{ tarea.descripcion }} (Estado: {{ tarea.estado }})
-                  </li>
-                </ul>
-                <div v-else-if="!loadingTareas">
-                  <p>No tienes tareas asignadas.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h2>Notificaciones</h2>
-                <p>Aquí irán tus notificaciones.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8">
-            <div class="card mb-4">
-              <div class="card-body">
-                <h2>Tareas de la semana</h2>
-                <p>Aquí tareas dentro de la semana.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8">
-            <div class="card mb-4">
-              <div class="card-body">
-                <h2>Tareas según sector</h2>
-                <p>Aquí tareas dentro de un sector específico.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+
+
       </div>
     </div>
   </div>
@@ -257,7 +186,7 @@ const fetchTareasUsuario = async () => {
 
 const executeQuery = async () => {
   console.group('Iniciando executeQuery');
-  
+
   // 1. Verificación inicial
   if (!selectedQuery.value) {
     console.error('❌ No hay consulta seleccionada');
@@ -324,7 +253,7 @@ const executeQuery = async () => {
     console.log('📤 Headers enviados:', headers);
 
     // 4. Realizar petición
-    const response = await axios.get(endpoint, { 
+    const response = await axios.get(endpoint, {
       headers,
       params
     });
@@ -354,9 +283,9 @@ const executeQuery = async () => {
       stack: err.stack
     });
 
-    error.value = err.response?.data?.message || 
-                 (err.response?.status === 403 ? 'Acceso no autorizado (403)' : err.message) || 
-                 'Error desconocido al ejecutar la consulta';
+    error.value = err.response?.data?.message ||
+      (err.response?.status === 403 ? 'Acceso no autorizado (403)' : err.message) ||
+      'Error desconocido al ejecutar la consulta';
 
     // Mostrar más detalles del 403
     if (err.response?.status === 403) {

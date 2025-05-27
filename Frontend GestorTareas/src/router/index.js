@@ -4,6 +4,7 @@ import LoginView from '../views/Auth/LoginView.vue'
 import RegisterView from '../views/Auth/RegisterView.vue'
 import AdminHome from '../views/Admin/AdminHome.vue'
 import ClientHome from '../views/Client/ClientHome.vue'
+import ClienteTareas from '../views/Client/ClienteTareas.vue'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
@@ -41,6 +42,12 @@ const router = createRouter({
             path: '/client',
             name: 'client',
             component: ClientHome,
+            meta: { requiresAuth: true, role: 'cliente' }
+        },
+        {
+            path: '/client/tasks/manager',
+            name: 'client-task',
+            component: ClienteTareas,
             meta: { requiresAuth: true, role: 'cliente' }
         }
     ]

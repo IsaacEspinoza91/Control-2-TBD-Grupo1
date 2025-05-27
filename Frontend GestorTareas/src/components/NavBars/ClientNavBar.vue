@@ -11,7 +11,7 @@
                         <router-link class="nav-link" to="/client">Home</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/client/tasks">Historial Tareas</router-link>
+                        <router-link class="nav-link" to="/client/tasks/manager">Tareas Manager</router-link>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
