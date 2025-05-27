@@ -46,6 +46,11 @@
                     ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?
                   </a>
                 </li>
+                <li>
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('pendiente-mas-cercana')">
+                    ¿Cuál es la tarea más cercana al usuario (que esté pendiente)?
+                  </a>
+                </li>
               </ul>
             </div>
 
