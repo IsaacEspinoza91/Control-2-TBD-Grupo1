@@ -185,8 +185,23 @@ const selectQuery = (query) => {
 }
 
 const executeQuery = async () => {
-  if (!selectedQuery.value || !authStore.user?.nombreUsuario) {
-    console.error("Faltan datos: selectedQuery o user.nick");
+  console.group('Iniciando executeQuery');
+  
+  // 1. Verificación inicial
+  if (!selectedQuery.value) {
+    console.error('❌ No hay consulta seleccionada');
+    error.value = 'Debes seleccionar una consulta primero';
+    console.groupEnd();
+    return;
+  }
+
+  if (!authStore.user?.nombreUsuario) {
+    console.error('❌ No hay nombre de usuario', {
+      storeUser: authStore.user,
+      localStorage: localStorage.getItem('auth')
+    });
+    error.value = 'No se encontró información del usuario';
+    console.groupEnd();
     return;
   }
 
@@ -195,35 +210,71 @@ const executeQuery = async () => {
   resultado.value = null;
 
   try {
-    let endpoint;
-    
-    if (selectedQuery.value === 'por-sector') {
-      endpoint = `http://localhost:8080/api/por-sector/${authStore.user.nombreUsuario}`; // URL completa para debug
-    } else {
-      endpoint = `http://localhost:8080/api/usuario/${authStore.user.id}/sector-mas-tareas-realizadas-${selectedQuery.value}km`;
-    }
+    // 2. Construcción del endpoint
+    const userIdentifier = authStore.user.nombreUsuario;
+    const endpoint = selectedQuery.value === 'por-sector'
+      ? `http://localhost:8080/api/tarea/por-sector/${userIdentifier}`
+      : `http://localhost:8080/api/usuario/${authStore.user.id}/sector-mas-tareas-realizadas-${selectedQuery.value}km`;
 
-    console.log("Endpoint:", endpoint); // Debug
-    console.log("Token:", authStore.token); // Debug
-
-    const response = await axios.get(endpoint, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Content-Type': 'application/json'
-      }
+    console.log('🔍 Datos de la petición:', {
+      endpoint,
+      selectedQuery: selectedQuery.value,
+      user: authStore.user,
+      token: authStore.token
     });
-    
-    console.log("Response:", response); // Debug
+
+    // 3. Headers detallados
+    const headers = {
+      'Authorization': `Bearer ${authStore.token}`,
+      'Content-Type': 'application/json',
+      'X-Debug-Request': 'true'
+    };
+
+    console.log('📤 Headers enviados:', headers);
+
+    // 4. Realizar petición
+    const response = await axios.get(endpoint, { headers });
+
+    console.log('📥 Respuesta exitosa:', {
+      status: response.status,
+      data: response.data,
+      headers: response.headers
+    });
+
     resultado.value = response.data;
 
   } catch (err) {
-    console.error("Error completo:", err); // Debug
-    console.error("Response error:", err.response); // Debug
+    console.error('🔥 Error completo:', {
+      message: err.message,
+      code: err.code,
+      config: {
+        url: err.config?.url,
+        headers: err.config?.headers,
+        method: err.config?.method
+      },
+      response: {
+        status: err.response?.status,
+        data: err.response?.data,
+        headers: err.response?.headers
+      },
+      stack: err.stack
+    });
+
     error.value = err.response?.data?.message || 
-                 err.message || 
-                 'Error al ejecutar la consulta. Por favor intenta nuevamente.';
+                 (err.response?.status === 403 ? 'Acceso no autorizado (403)' : err.message) || 
+                 'Error desconocido al ejecutar la consulta';
+
+    // Mostrar más detalles del 403
+    if (err.response?.status === 403) {
+      console.warn('⚠️ Posibles causas del 403:');
+      console.warn('- Token inválido o expirado');
+      console.warn('- Falta de permisos para el recurso');
+      console.warn('- Configuración incorrecta de CORS');
+      console.warn('- Políticas de seguridad en el backend');
+    }
   } finally {
     loading.value = false;
+    console.groupEnd();
   }
 };
 </script>

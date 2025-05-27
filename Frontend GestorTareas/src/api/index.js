@@ -15,11 +15,16 @@ api.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        
+        // Debug: verifica token antes de enviar
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        console.log('🔐 Token payload:', {
+            user: payload.sub,
+            exp: new Date(payload.exp * 1000),
+            roles: payload.roles
+        });
     }
     return config;
-}, error => {
-    return Promise.reject(error);
 });
 
 // Interceptor de respuestas
