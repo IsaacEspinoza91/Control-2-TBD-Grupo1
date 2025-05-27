@@ -25,6 +25,15 @@
                   <a
                       class="dropdown-item"
                       href="#"
+                      @click.prevent="selectQuery('por-sector')"
+                  >
+                    ¿Cuántas tareas ha hecho el usuario por sector?
+                  </a>
+                </li>
+                <li>
+                  <a
+                      class="dropdown-item"
+                      href="#"
                       @click.prevent="selectQuery(2)"
                   >
                     ¿Cuál es el sector con más tareas completadas en un radio de 2 kilómetros del usuario?
@@ -56,9 +65,13 @@
           <!-- Consulta seleccionada -->
           <div v-if="selectedQuery" class="mt-2 p-3 bg-light rounded">
             <strong>Consulta seleccionada:</strong>
-            {{ selectedQuery === 2 ?
+            {{ 
+              selectedQuery === 'por-sector' ? 
+              '¿Cuántas tareas ha hecho el usuario por sector?' :
+              selectedQuery === 2 ?
               '¿Cuál es el sector con más tareas completadas en un radio de 2 kilómetros del usuario?' :
-              '¿Cuál es el sector con más tareas completadas dentro de un radio de 5 km desde la ubicación del usuario?' }}
+              '¿Cuál es el sector con más tareas completadas dentro de un radio de 5 km desde la ubicación del usuario?'
+            }}
           </div>
 
           <!-- Resultados -->
@@ -71,13 +84,32 @@
               <p class="mt-2">Procesando consulta...</p>
             </div>
             <div v-else-if="resultado">
-              <div v-if="resultado.sectorId" class="alert alert-success">
-                <p class="mb-1"><strong>Sector:</strong> {{ resultado.sectorNombre }}</p>
-                <p class="mb-1"><strong>Tareas realizadas:</strong> {{ resultado.tareasRealizadas }}</p>
-                <p class="mb-0"><strong>Radio de búsqueda:</strong> {{ resultado.radioKm }} km</p>
+              <!-- Resultado para consulta por sector -->
+              <div v-if="selectedQuery === 'por-sector'">
+                <div v-if="resultado.length > 0" class="alert alert-success">
+                  <h6 class="mb-3">Tareas realizadas por sector:</h6>
+                  <ul class="list-group">
+                    <li v-for="item in resultado" :key="item.sector" class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ item.sector }}
+                      <span class="badge bg-primary rounded-pill">{{ item.totalTareas }}</span>
+                    </li>
+                  </ul>
+                </div>
+                <div v-else class="alert alert-info">
+                  No hay tareas realizadas en ningún sector.
+                </div>
               </div>
-              <div v-else class="alert alert-info">
-                No se encontraron resultados para esta consulta.
+
+              <!-- Resultado para otras consultas -->
+              <div v-else>
+                <div v-if="resultado.sectorId" class="alert alert-success">
+                  <p class="mb-1"><strong>Sector:</strong> {{ resultado.sectorNombre }}</p>
+                  <p class="mb-1"><strong>Tareas realizadas:</strong> {{ resultado.tareasRealizadas }}</p>
+                  <p class="mb-0"><strong>Radio de búsqueda:</strong> {{ resultado.radioKm }} km</p>
+                </div>
+                <div v-else class="alert alert-info">
+                  No se encontraron resultados para esta consulta.
+                </div>
               </div>
             </div>
             <div v-else class="text-muted p-2">
@@ -138,7 +170,7 @@ const authStore = useAuthStore()
 
 // Estado del componente
 const showDropdown = ref(false)
-const selectedQuery = ref(null) // 2 o 5 (km)
+const selectedQuery = ref(null) // 'por-sector', 2 o 5
 const resultado = ref(null)
 const error = ref(null)
 const loading = ref(false)
@@ -147,33 +179,53 @@ const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
 }
 
-const selectQuery = (km) => {
-  selectedQuery.value = km
+const selectQuery = (query) => {
+  selectedQuery.value = query
   showDropdown.value = false
 }
 
 const executeQuery = async () => {
-  if (!selectedQuery.value || !authStore.user?.id) return
+  if (!selectedQuery.value || !authStore.user?.nombreUsuario) {
+    console.error("Faltan datos: selectedQuery o user.nick");
+    return;
+  }
 
-  loading.value = true
-  error.value = null
-  resultado.value = null
+  loading.value = true;
+  error.value = null;
+  resultado.value = null;
 
   try {
-    const endpoint = `/api/usuario/${authStore.user.id}/sector-mas-tareas-realizadas-${selectedQuery.value}km`
+    let endpoint;
+    
+    if (selectedQuery.value === 'por-sector') {
+      endpoint = `http://localhost:8080/api/por-sector/${authStore.user.nombreUsuario}`; // URL completa para debug
+    } else {
+      endpoint = `http://localhost:8080/api/usuario/${authStore.user.id}/sector-mas-tareas-realizadas-${selectedQuery.value}km`;
+    }
+
+    console.log("Endpoint:", endpoint); // Debug
+    console.log("Token:", authStore.token); // Debug
+
     const response = await axios.get(endpoint, {
       headers: {
-        'Authorization': `Bearer ${authStore.token}`
+        'Authorization': `Bearer ${authStore.token}`,
+        'Content-Type': 'application/json'
       }
-    })
-    resultado.value = response.data
+    });
+    
+    console.log("Response:", response); // Debug
+    resultado.value = response.data;
+
   } catch (err) {
-    error.value = err.response?.data?.message || 'Error al ejecutar la consulta. Por favor intenta nuevamente.'
-    console.error('Error:', err.response?.data || err.message)
+    console.error("Error completo:", err); // Debug
+    console.error("Response error:", err.response); // Debug
+    error.value = err.response?.data?.message || 
+                 err.message || 
+                 'Error al ejecutar la consulta. Por favor intenta nuevamente.';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -235,5 +287,14 @@ const executeQuery = async () => {
 .dropdown-toggle {
   position: relative;
   padding-right: 30px;
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+}
+
+.badge {
+  font-size: 0.9em;
 }
 </style>
