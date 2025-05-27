@@ -91,11 +91,13 @@ public class UsuarioController {
     public List<UsuarioDistanciaDTO> obtenerPromedioDeDistancia(
             @RequestParam double longitud,
             @RequestParam double latitud) {
+        System.out.println("➡️ Controller: promedio-de-distancia");
         return usuarioService.obtenerPromedioDistancia(longitud, latitud);
     }
 
     @GetMapping("/promedio-distancia/{usuarioId}")
     public ResponseEntity<UsuarioDistanciaDTO> obtenerPromedioDistanciaPorUsuarioId(@PathVariable Long usuarioId) {
+        System.out.println("➡️ Controller: promedio-distancia");
         UsuarioDistanciaDTO resultado = usuarioService.obtenerPromedioDistanciaPorUsuarioId(usuarioId);
         if (resultado != null) {
             return ResponseEntity.ok(resultado);

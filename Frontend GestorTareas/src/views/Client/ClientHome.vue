@@ -32,6 +32,11 @@
                   </a>
                 </li>
                 <li>
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('tareas-pendientes-sector')">
+                    ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
+                  </a>
+                </li>
+                <li>
                   <a class="dropdown-item" href="#" @click.prevent="selectQuery('distancia-promedio-usuario')">
                     ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?
                   </a>
@@ -84,6 +89,23 @@
                 </div>
               </div>
 
+              <!-- Resultado para consulta de tareas pendientes por sector -->
+              <div v-else-if="selectedQuery === 'tareas-pendientes-sector'">
+                <div v-if="resultado.length > 0" class="alert alert-warning">
+                  <h6 class="mb-3">Tareas pendientes por sector:</h6>
+                  <ul class="list-group">
+                    <li v-for="item in resultado" :key="item.sector"
+                      class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ item.sector }}
+                      <span class="badge bg-warning text-dark rounded-pill">{{ item.total_tareas_pendientes }}</span>
+                    </li>
+                  </ul>
+                </div>
+                <div v-else class="alert alert-info">
+                  No hay tareas pendientes en ningún sector.
+                </div>
+              </div>
+
               <!-- Resultado para consultas de distancia promedio -->
               <div v-else-if="selectedQuery.includes('distancia-promedio')">
                 <div v-if="resultado.promedioDistancia !== undefined" class="alert alert-success">
@@ -117,9 +139,6 @@
             </div>
           </div>
         </div>
-
-
-
       </div>
     </div>
   </div>
@@ -148,6 +167,7 @@ const queryDescriptions = {
   'por-sector': '¿Cuántas tareas ha hecho el usuario por sector?',
   'sector-2km': '¿Cuál es el sector con más tareas completadas en un radio de 2 km del usuario?',
   'sector-5km': '¿Cuál es el sector con más tareas completadas en un radio de 5 km del usuario?',
+  'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes? (admin)?',
   'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?',
   'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?'
 }
@@ -185,18 +205,18 @@ const fetchTareasUsuario = async () => {
 }
 
 const executeQuery = async () => {
-  console.group('Iniciando executeQuery');
+  console.group('🛐DEBUG: Iniciando executeQuery🛐');
 
   // 1. Verificación inicial
   if (!selectedQuery.value) {
-    console.error('❌ No hay consulta seleccionada');
+    console.error('❌DEBUG: No hay consulta seleccionada');
     error.value = 'Debes seleccionar una consulta primero';
     console.groupEnd();
     return;
   }
 
   if (!authStore.user?.idUsuario) {
-    console.error('❌ No hay ID de usuario', {
+    console.error('❌DEBUG: No hay ID de usuario', {
       storeUser: authStore.user,
       localStorage: localStorage.getItem('auth')
     });
@@ -224,6 +244,9 @@ const executeQuery = async () => {
       case 'sector-5km':
         endpoint = `/usuario/${authStore.user.idUsuario}/sector-mas-tareas-realizadas-5km`;
         break;
+      case 'tareas-pendientes-sector':
+        endpoint = `/tarea/pendientes-por-sector`;
+        break;
       case 'distancia-promedio-registro':
         endpoint = `/usuario/promedio-distancia/${authStore.user.idUsuario}`;
         break;
@@ -236,7 +259,7 @@ const executeQuery = async () => {
         break;
     }
 
-    console.log('🔍 Datos de la petición:', {
+    console.log('❗DEBUG: Datos de la petición:', {
       endpoint,
       selectedQuery: selectedQuery.value,
       user: authStore.user,
@@ -250,7 +273,7 @@ const executeQuery = async () => {
       'X-Debug-Request': 'true'
     };
 
-    console.log('📤 Headers enviados:', headers);
+    console.log('❗DEBUG: Headers enviados:', headers);
 
     // 4. Realizar petición
     const response = await axios.get(endpoint, {
@@ -258,7 +281,7 @@ const executeQuery = async () => {
       params
     });
 
-    console.log('📥 Respuesta exitosa:', {
+    console.log('✅DEBUG: Respuesta exitosa:', {
       status: response.status,
       data: response.data,
       headers: response.headers
@@ -267,7 +290,7 @@ const executeQuery = async () => {
     resultado.value = response.data;
 
   } catch (err) {
-    console.error('🔥 Error completo:', {
+    console.error('❌DEBUG: Error completo:', {
       message: err.message,
       code: err.code,
       config: {
@@ -289,7 +312,7 @@ const executeQuery = async () => {
 
     // Mostrar más detalles del 403
     if (err.response?.status === 403) {
-      console.warn('⚠️ Posibles causas del 403:');
+      console.warn('❌DEBUG: Posibles causas del 403:');
       console.warn('- Token inválido o expirado');
       console.warn('- Falta de permisos para el recurso');
       console.warn('- Configuración incorrecta de CORS');
@@ -380,5 +403,10 @@ onMounted(() => {
   width: 1rem;
   height: 1rem;
   border-width: 0.2em;
+}
+
+/* Estilo específico para tareas pendientes */
+.badge.bg-warning {
+  color: #212529;
 }
 </style>
