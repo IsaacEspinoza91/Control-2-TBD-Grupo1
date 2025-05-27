@@ -93,4 +93,14 @@ public class UsuarioController {
             @RequestParam double latitud) {
         return usuarioService.obtenerPromedioDistancia(longitud, latitud);
     }
+
+    @GetMapping("/promedio-distancia/{usuarioId}")
+    public ResponseEntity<UsuarioDistanciaDTO> obtenerPromedioDistanciaPorUsuarioId(@PathVariable Long usuarioId) {
+        UsuarioDistanciaDTO resultado = usuarioService.obtenerPromedioDistanciaPorUsuarioId(usuarioId);
+        if (resultado != null) {
+            return ResponseEntity.ok(resultado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
