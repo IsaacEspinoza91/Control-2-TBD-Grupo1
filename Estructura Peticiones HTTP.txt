@@ -22,7 +22,7 @@ POST, URL: http://localhost:8080/api/auth/register
 
 
 Sentencias:
-1. POST: http://localhost:8080/api/tarea/tarea-cercana
+1. GET: http://localhost:8080/api/tarea/tarea-cercana
 {
     "usuarioId": 5,
     "longitud": -70.6700,
