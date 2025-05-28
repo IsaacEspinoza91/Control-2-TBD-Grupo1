@@ -51,6 +51,11 @@
                     ¿Cuál es la tarea más cercana al usuario (que esté pendiente)?
                   </a>
                 </li>
+                <li>
+                  <a class="dropdown-item" href="#" @click.prevent="selectQuery('pendiente-mas-cercana-ubi-usuario')">
+                    ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -320,6 +325,9 @@ const executeQuery = async () => {
         };
         break;
       case 'pendiente-mas-cercana':
+        endpoint = `/tarea/tarea-cercana`;
+        break;
+      case 'pendiente-mas-cercana-ubi-usuario':
         endpoint = `/tarea/usuario/${authStore.user.idUsuario}/tarea-cercana`;
         break;
     }
