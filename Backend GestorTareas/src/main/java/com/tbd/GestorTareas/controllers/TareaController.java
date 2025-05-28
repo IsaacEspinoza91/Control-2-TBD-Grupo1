@@ -156,5 +156,12 @@ public class TareaController {
         boolean updated = tareaService.cambiarEstadoEliminado(id);
         return updated ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+
+    @GetMapping("/usuario/{usuarioId}/segun-palabra/{palabraClave}")
+    public ResponseEntity<List<TareaResponseDTO>> obtenerTareasSegunPalabraClave(@PathVariable Long usuarioId, @PathVariable String palabraClave) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasSegunPalabraClave(palabraClave, usuarioId);
+        return ResponseEntity.ok(tareas);
+    }
 }
 

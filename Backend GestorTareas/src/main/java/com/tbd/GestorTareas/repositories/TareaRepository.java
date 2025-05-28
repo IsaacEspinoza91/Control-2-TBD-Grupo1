@@ -345,6 +345,20 @@ public class TareaRepository {
     }
 
 
-
+    public List<Tarea> encontrarTareasSegunPalabraClave(String palabraClave, Long usuarioId) {
+        String sql = """
+                SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, 
+                    ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id 
+                FROM tarea where usuario_id = :usuarioId AND eliminado = false 
+                    AND (titulo ILIKE '%' || :palabraClave || '%' OR descripcion ILIKE '%' || :palabraClave || '%')
+                ORDER BY fechavencimiento ASC
+                """;
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .addParameter("palabraClave", palabraClave)
+                    .executeAndFetch(Tarea.class);
+        }
+    }
 
 }

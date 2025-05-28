@@ -5,9 +5,25 @@
         <div class="task-manager-container">
             <div class="task-manager-header">
                 <h1 class="task-manager-title">Gestor de Tareas</h1>
-                <button @click="showCreateModal = true" class="btn btn-primary">
-                    Nueva Tarea
-                </button>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <input
+                        v-model="searchKeyword"
+                        type="text"
+                        placeholder="Buscar tareas..."
+                        class="search-input"
+                        @keyup.enter="searchTasks"
+                        />
+                        <button @click="searchTasks" class="btn btn-search">
+                        <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                
+
+                    <button @click="showCreateModal = true" class="btn btn-primary">
+                        Nueva Tarea
+                    </button>
+                </div>
             </div>
 
             <!-- Filtros y pestañas -->
@@ -205,6 +221,30 @@ const setLocation = (e) => {
 const authStore = useAuthStore();
 
 // Estados
+const searchKeyword = ref('');  // Para busqueda
+const isSearching = ref(false);
+
+// Función para buscar tareas por palabra clave
+const searchTasks = async () => {
+  if (!searchKeyword.value.trim()) {
+    isSearching.value = false;
+    await loadTasks(); // Recargar todas las tareas si el campo está vacío
+    return;
+  }
+
+  try {
+    isSearching.value = true;
+    const userId = authStore.user?.idUsuario;
+    const response = await api.get(`/tarea/usuario/${userId}/segun-palabra/${encodeURIComponent(searchKeyword.value)}`);
+    tasks.value = response.data;
+  } catch (error) {
+    console.error('Error al buscar tareas:', error);
+    isSearching.value = false;
+  }
+};
+
+
+
 const tasks = ref([]);
 const activeTab = ref('todas');
 const showCreateModal = ref(false);
@@ -281,6 +321,7 @@ const formatDate = (dateString) => {
 // Cargar tareas (modificado)
 const loadTasks = async () => {
     try {
+        isSearching.value = false;
         const userId = authStore.user?.idUsuario;
         if (!userId) return;
 
@@ -788,6 +829,49 @@ const openMapModal = (task) => {
     margin-right: 5px;
 }
 
+/* Nuevos estilos para la barra de búsqueda */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-input {
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  min-width: 250px;
+  font-size: 14px;
+}
+
+.btn-search {
+  background-color: #6c757d;
+  color: white;
+  border-radius: 0 6px 6px 0;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-search:hover {
+  background-color: #5a6268;
+}
+
+.bi-search {
+  margin-right: 5px;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .task-manager-header {
@@ -804,5 +888,25 @@ const openMapModal = (task) => {
         flex-direction: column;
         gap: 0;
     }
+
+      .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .search-container {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .search-input {
+    min-width: auto;
+    flex-grow: 1;
+  }
+  
+  .btn-primary {
+    width: 100%;
+  }
 }
 </style>

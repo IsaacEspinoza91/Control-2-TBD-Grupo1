@@ -264,7 +264,7 @@
           <l-map
               ref="mapRef"
               class="map-container"
-              style="height: 300px"
+              style="height: 550px" 
               :zoom="13"
               :center="mapCenter"
               @click="onMapClick"

@@ -199,4 +199,14 @@ public class TareaService {
     public boolean cambiarEstadoEliminado(Long tareaId) {
         return tareaRepository.cambiarEstadoDeEliminado(tareaId);
     }
+
+
+    // Obtener todas las tareas de un usuario indpendiente estado que tienen una palabra especifica ya sea
+    //  en el titulo o descripcion
+    public List<TareaResponseDTO> obtenerTareasSegunPalabraClave(String palabraClave, Long usuarioId) {
+        List<Tarea> tareas = tareaRepository.encontrarTareasSegunPalabraClave(palabraClave, usuarioId);
+        return tareas.stream()
+                .map(TareaResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }
