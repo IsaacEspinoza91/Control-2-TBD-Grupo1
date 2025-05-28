@@ -38,7 +38,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item" href="#" @click.prevent="selectQuery('distancia-promedio-usuario')">
-                    ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?
+                    ¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario (poner un punto en el mapa)?
                   </a>
                 </li>
                 <li>
@@ -111,17 +111,37 @@
                 </div>
               </div>
 
-              <!-- Resultado para consultas de distancia promedio -->
-              <div v-else-if="selectedQuery.includes('distancia-promedio')">
-                <div v-if="resultado.promedioDistancia !== undefined" class="alert alert-success">
-                  <p><strong>Usuario:</strong> {{ resultado.nombreUsuario }} {{ resultado.apellidoUsuario }}</p>
-                  <p><strong>Promedio de distancia:</strong> {{ (resultado.promedioDistancia / 1000).toFixed(2) }} km
-                  </p>
+              <!-- Resultado para consultas de distancia promedio punto puesto -->
+              <div v-else-if="selectedQuery.includes('distancia-promedio-usuario')">
+                <div v-if="resultado.length > 0" class="alert alert-success">
+                  <h6 class="mb-3">Distancias promedio desde la ubicación seleccionada:</h6>
+                  <ul class="list-group">
+                    <li v-for="(item, index) in resultado" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ item.nombreUsuario }} {{ item.apellidoUsuario }}
+                      <span class="badge bg-primary rounded-pill">
+                        {{ (item.promedioDistancia / 1000).toFixed(2) }} km
+                      </span>
+                    </li>
+                  </ul>
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontraron resultados para esta consulta.
                 </div>
               </div>
+
+
+              <!-- Resultado para consultas de distancia promedio punto registrado -->
+              <div v-else-if="selectedQuery === 'distancia-promedio-registro'">
+                <div v-if="resultado && resultado.promedioDistancia !== undefined" class="alert alert-success">
+                  <h6 class="mb-3">Distancia promedio desde la ubicación registrada:</h6>
+                  <p><strong>{{ resultado.nombreUsuario }} {{ resultado.apellidoUsuario }}</strong></p>
+                  <p>Promedio de distancia: <strong>{{ (resultado.promedioDistancia / 1000).toFixed(2) }} km</strong></p>
+                </div>
+                <div v-else class="alert alert-info">
+                  No hay tareas realizadas en ningún sector.
+                </div>
+              </div>
+
 
               <!-- Resultado para otras consultas -->
               <div v-else>
@@ -145,6 +165,28 @@
           </div>
         </div>
       </div>
+
+      <div class="form-group">
+          <label class="form-label">
+              <i class="bi bi-geo-alt me-2"></i>
+              Seleccione su ubicación
+          </label>
+          <l-map
+              ref="mapRef"
+              class="map-container"
+              style="height: 300px"
+              :zoom="13"
+              :center="mapCenter"
+              @click="onMapClick"
+          >
+
+              <l-tile-layer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <l-marker :lat-lng="ubicacion" v-if="ubicacion" />
+          </l-map>
+          <small v-if="ubicacion">Lat: {{ ubicacion.lat }}, Lng: {{ ubicacion.lng }}</small>
+      </div>
     </div>
   </div>
 </template>
@@ -154,6 +196,9 @@ import ClientNavBar from '../../components/NavBars/ClientNavBar.vue'
 import { useAuthStore } from '../../stores/auth'
 import { ref, onMounted } from 'vue'
 import axios from '../../api' // Importamos la instancia de axios configurada
+
+//inicio del mapa
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 
 const authStore = useAuthStore()
 
@@ -168,12 +213,24 @@ const tareasUsuario = ref([])
 const loadingTareas = ref(false)
 const errorTareas = ref(null)
 
+
+const mapCenter = ref([-33.456, -70.648])
+const ubicacion = ref(null)
+
+const onMapClick = (e) => {
+  ubicacion.value = e.latlng
+  authStore.user.longitud = e.latlng.lng
+  authStore.user.latitud = e.latlng.lat
+}
+
+//fin del mapa
+
 const queryDescriptions = {
   'por-sector': '¿Cuántas tareas ha hecho el usuario por sector?',
   'sector-2km': '¿Cuál es el sector con más tareas completadas en un radio de 2 km del usuario?',
   'sector-5km': '¿Cuál es el sector con más tareas completadas en un radio de 5 km del usuario?',
   'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes? (admin)?',
-  'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?',
+  'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?  (poner un punto en el mapa)',
   'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?'
 }
 
@@ -264,6 +321,8 @@ const executeQuery = async () => {
         break;
     }
 
+    
+
     console.log('❗DEBUG: Datos de la petición:', {
       endpoint,
       selectedQuery: selectedQuery.value,
@@ -315,14 +374,6 @@ const executeQuery = async () => {
       (err.response?.status === 403 ? 'Acceso no autorizado (403)' : err.message) ||
       'Error desconocido al ejecutar la consulta';
 
-    // Mostrar más detalles del 403
-    if (err.response?.status === 403) {
-      console.warn('❌DEBUG: Posibles causas del 403:');
-      console.warn('- Token inválido o expirado');
-      console.warn('- Falta de permisos para el recurso');
-      console.warn('- Configuración incorrecta de CORS');
-      console.warn('- Políticas de seguridad en el backend');
-    }
   } finally {
     loading.value = false;
     console.groupEnd();
