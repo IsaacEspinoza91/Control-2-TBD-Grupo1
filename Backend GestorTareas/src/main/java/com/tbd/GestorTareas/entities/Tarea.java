@@ -11,14 +11,14 @@ public class Tarea {
     private String estado;
     private String ubicacion; // Almacenaremos el WKT del punto
     private boolean eliminado;
-    private Long usuario_id;
-    private Long sector_id;
+    private Integer usuario_id;
+    private Integer sector_id;
 
     // Constructores
     public Tarea() {}
 
     public Tarea(String titulo, String descripcion, LocalDate fechacreacion, LocalDate fechavencimiento,
-                 String estado, String ubicacion, boolean eliminado, Long usuario_id, Long sector_id) {
+                 String estado, String ubicacion, boolean eliminado, Integer usuario_id, Integer sector_id) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fechacreacion = fechacreacion;
@@ -96,19 +96,19 @@ public class Tarea {
         this.eliminado = eliminado;
     }
 
-    public Long getUsuario_id() {
+    public Integer getUsuario_id() {
         return usuario_id;
     }
 
-    public void setUsuario_id(Long usuario_id) {
+    public void setUsuario_id(Integer usuario_id) {
         this.usuario_id = usuario_id;
     }
 
-    public Long getSector_id() {
+    public Integer getSector_id() {
         return sector_id;
     }
 
-    public void setSector_id(Long sector_id) {
+    public void setSector_id(Integer sector_id) {
         this.sector_id = sector_id;
     }
 

@@ -125,13 +125,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="form-label">Sector</label>
-                                    <select v-model="currentTask.sector_id" class="form-select" required>
-                                        <option value="1">Sector 1</option>
-                                        <option value="2">Sector 2</option>
-                                    </select>
-                                </div>
+
 
                                 <div class="form-actions">
                                     <button type="button" @click="closeModal" class="btn btn-secondary">
@@ -223,7 +217,7 @@ const currentTask = ref({
     latitud: '',
     longitud: '',
     usuario_id: authStore.user?.idUsuario,
-    sector_id: 1
+    sector_id: null
 });
 
 // Pestañas disponibles (modificado)
@@ -280,7 +274,8 @@ const getTasksToShow = computed(() => {
 // Formatear fecha (igual que antes)
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    const fecha = new Date(dateString + "T00:00:00").toLocaleDateString('es-ES', options);
+    return fecha ; // Formatea la fecha para considerar zona horaria 0
 };
 
 // Cargar tareas (modificado)
@@ -375,7 +370,7 @@ const closeModal = () => {
         latitud: '',
         longitud: '',
         usuario_id: authStore.user?.idUsuario,
-        sector_id: 1
+        sector_id: null
     };
 };
 

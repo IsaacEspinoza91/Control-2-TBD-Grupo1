@@ -13,8 +13,8 @@ public class TareaResponseDTO {
     private Double latitud; // Para enviar la latitud
     private Double longitud; // Para enviar la longitud
     private boolean eliminado;
-    private Long usuario_id;
-    private Long sector_id;
+    private Integer usuario_id;
+    private Integer sector_id;
 
     public TareaResponseDTO() {}
 
@@ -78,9 +78,17 @@ public class TareaResponseDTO {
     public boolean isEliminado() { return eliminado; }
     public void setEliminado(boolean eliminado) { this.eliminado = eliminado; }
 
-    public Long getUsuario_id() { return usuario_id; }
-    public void setUsuario_id(Long usuario_id) { this.usuario_id = usuario_id; }
+    public Integer getUsuario_id() {
+        return usuario_id;
+    }
+    public void setUsuario_id(Integer usuario_id) {
+        this.usuario_id = usuario_id;
+    }
 
-    public Long getSector_id() { return sector_id; }
-    public void setSector_id(Long sector_id) { this.sector_id = sector_id; }
+    public Integer getSector_id() {
+        return sector_id;
+    }
+    public void setSector_id(Integer sector_id) {
+        this.sector_id = sector_id;
+    }
 }

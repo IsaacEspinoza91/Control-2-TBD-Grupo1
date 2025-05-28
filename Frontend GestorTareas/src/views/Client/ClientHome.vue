@@ -259,7 +259,7 @@
       <div class="form-group">
           <label class="form-label">
               <i class="bi bi-geo-alt me-2"></i>
-              Seleccione su ubicación
+              Seleccione su ubicación actual
           </label>
           <l-map
               ref="mapRef"
@@ -320,7 +320,8 @@ const queryDescriptions = {
   'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes? (admin)?',
   'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?  (poner un punto en el mapa)',
   'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?',
-  'pendiente-mas-cercana': '¿Cuál es la tarea más cercana al usuario (que esté pendiente)?'
+  'pendiente-mas-cercana': '¿Cuál es la tarea pendiente más cercana al usuario según la ubicación seleccionada en el mapa?',
+  'pendiente-mas-cercana-ubi-usuario': '¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?'
 }
 
 const toggleDropdown = () => {

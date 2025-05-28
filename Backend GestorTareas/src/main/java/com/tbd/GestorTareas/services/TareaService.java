@@ -1,6 +1,7 @@
 package com.tbd.GestorTareas.services;
 
 import com.tbd.GestorTareas.DTO.*;
+import com.tbd.GestorTareas.entities.Sector;
 import com.tbd.GestorTareas.entities.Tarea;
 import com.tbd.GestorTareas.repositories.TareaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,17 @@ public class TareaService {
         tarea.setFechacreacion(LocalDate.now());
         tarea.setFechavencimiento(tareaRequestDTO.getFechavencimiento());
         tarea.setEstado("pendiente");
-        tarea.setUbicacion(tareaRequestDTO.toWkt()); // Convierte lat/lng a WKT
+        tarea.setUbicacion(tareaRequestDTO.toWkt());
         tarea.setEliminado(tareaRequestDTO.isEliminado());
         tarea.setUsuario_id(tareaRequestDTO.getUsuario_id());
-        tarea.setSector_id(tareaRequestDTO.getSector_id());
+
+        // Asignar sector automaticamente a tarea
+        Sector sector = tareaRepository.findSectorByLongitudLatitud(tareaRequestDTO.getLongitud(), tareaRequestDTO.getLatitud());
+        if (sector != null) {
+            tarea.setSector_id(sector.getId());
+        } else {
+            tarea.setSector_id(null);
+        }
 
         Tarea savedTarea = tareaRepository.save(tarea);
         return new TareaResponseDTO(savedTarea);
@@ -70,7 +78,14 @@ public class TareaService {
         existingTarea.setUbicacion(tareaRequestDTO.toWkt()); // Convierte lat/lng a WKT
         existingTarea.setEliminado(tareaRequestDTO.isEliminado());
         existingTarea.setUsuario_id(tareaRequestDTO.getUsuario_id());
-        existingTarea.setSector_id(tareaRequestDTO.getSector_id());
+
+        // Asignar sector automaticamente a tarea
+        Sector sector = tareaRepository.findSectorByLongitudLatitud(tareaRequestDTO.getLongitud(), tareaRequestDTO.getLatitud());
+        if (sector != null) {
+            existingTarea.setSector_id(sector.getId());
+        } else {
+            existingTarea.setSector_id(null);
+        }
 
         tareaRepository.update(existingTarea);
         return new TareaResponseDTO(existingTarea);

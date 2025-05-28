@@ -1,6 +1,7 @@
 package com.tbd.GestorTareas.repositories;
 
 import com.tbd.GestorTareas.DTO.*;
+import com.tbd.GestorTareas.entities.Sector;
 import com.tbd.GestorTareas.entities.Tarea;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -324,5 +325,26 @@ public class TareaRepository {
             return false;
         }
     }
+
+
+    // Obtiene el primer sector del cual una tarea pertenece segun ubicacion
+    public Sector findSectorByLongitudLatitud(Double longitud, Double latitud) {
+        String sql = """
+            SELECT s.id, s.nombre, s.categoria
+            FROM sector s
+            WHERE ST_Contains(s.geom::geometry, ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326))
+            LIMIT 1
+        """;
+
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery(sql)
+                    .addParameter("longitud", longitud)
+                    .addParameter("latitud", latitud)
+                    .executeAndFetchFirst(Sector.class);
+        }
+    }
+
+
+
 
 }
