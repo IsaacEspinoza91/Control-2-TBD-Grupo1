@@ -147,6 +147,22 @@
                 </div>
               </div>
 
+              <!-- Resultado para consulta 'pendiente-mas-cercana-ubi-usuario' -->
+              <div v-else-if="selectedQuery === 'pendiente-mas-cercana-ubi-usuario'">
+                <div v-if="resultado && resultado.id" class="alert alert-success">
+                  <h6 class="mb-3">Tarea pendiente más cercana:</h6>
+                  <p><strong>ID Tarea:</strong> {{ resultado.id }}</p>
+                  <p><strong>Título:</strong> {{ resultado.titulo }}</p>
+                  <p><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
+                  <!-- Dirección no disponible, mostrar latitud y longitud en su lugar -->
+                  <p><strong>Latitud:</strong> {{ resultado.latitud }}</p>
+                  <p><strong>Longitud:</strong> {{ resultado.longitud }}</p>
+                  <p><strong>Distancia:</strong> {{ (resultado.distancia / 1000).toFixed(2) }} km</p>
+                </div>
+                <div v-else class="alert alert-info">
+                  No se encontró una tarea pendiente cercana.
+                </div>
+              </div>
 
               <!-- Resultado para otras consultas -->
               <div v-else>
