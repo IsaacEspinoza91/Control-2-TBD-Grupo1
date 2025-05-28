@@ -211,7 +211,8 @@ public class TareaRepository {
     public List<Tarea> findByUsuarioId(Long usuarioId) {
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
-                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false";
+                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false " +
+                "ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
         }
@@ -226,7 +227,7 @@ public class TareaRepository {
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
                 "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false AND estado = 'pendiente' " +
-                "AND fechavencimiento BETWEEN :startDate AND :endDate";
+                "AND fechavencimiento BETWEEN :startDate AND :endDate ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql)
                     .addParameter("usuarioId", usuarioId)
@@ -240,7 +241,19 @@ public class TareaRepository {
     public List<Tarea> findTareasCompletadasByUsuarioId(Long usuarioId) {
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
-                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'realizada' AND eliminado = false";
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'realizada' AND eliminado = false" +
+                "ORDER BY fechavencimiento ASC";
+        try (var con = sql2o.open()) {
+            return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
+        }
+    }
+
+    // Obtener todas las tareas pendientes del usuario según id usuario
+    public List<Tarea> findTareasPendientesByUsuarioId(Long usuarioId) {
+        String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
+                "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'pendiente' AND eliminado = false" +
+                "ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
         }

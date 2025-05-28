@@ -246,8 +246,11 @@ const changeTab = async (tabId) => {
         let endpoint = '';
 
         switch (tabId) {
+            case 'pendientes':
+                endpoint = `/tarea/usuario/pendientes/${userId}`;
+                break;
             case 'realizadas':
-                endpoint = `/tarea/usuario/realizadas/${userId}`;
+                endpoint = `/tarea/usuario/completadas/${userId}`;
                 break;
             case 'semana':
                 endpoint = `/tarea/usuario/semana-actual/${userId}`;
@@ -255,6 +258,7 @@ const changeTab = async (tabId) => {
             case 'proxima':
                 endpoint = `/tarea/usuario/proximas-incompletas/${userId}`;
                 break;
+            case 'todas':
             default:
                 endpoint = `/tarea/usuario/${userId}`;
         }
@@ -270,24 +274,7 @@ const changeTab = async (tabId) => {
 
 // Filtrar tareas según la pestaña activa (simplificado)
 const filteredTasks = computed(() => {
-    switch (activeTab.value) {
-        case 'pendientes':
-            return tasks.value.filter(t => t.estado === 'pendiente' && !t.eliminado);
-        case 'realizadas':
-            return tasks.value.filter(t => t.estado === 'realizada' && !t.eliminado);
-        case 'semana':
-            const today = new Date();
-            const nextWeek = new Date();
-            nextWeek.setDate(today.getDate() + 7);
-            return tasks.value.filter(t => {
-                const dueDate = new Date(t.fechavencimiento);
-                return dueDate <= nextWeek && dueDate >= today && !t.eliminado;
-            });
-        case 'eliminadas':
-            return tasks.value.filter(t => t.eliminado);
-        default:
-            return tasks.value.filter(t => !t.eliminado);
-    }
+    return tasks.value;
 });
 
 // Formatear fecha (igual que antes)

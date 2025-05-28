@@ -114,6 +114,13 @@ public class TareaController {
         return new ResponseEntity<>(tareas, HttpStatus.OK);
     }
 
+    // Obtener todas las tareas pendientes del usuario segun id usuario
+    @GetMapping("/usuario/pendientes/{usuarioId}")
+    public ResponseEntity<List<TareaResponseDTO>> getUncompletedTareasByUsuarioId(@PathVariable Long usuarioId) {
+        List<TareaResponseDTO> tareas = tareaService.obtenerTareasPendientesByUsuarioId(usuarioId);
+        return new ResponseEntity<>(tareas, HttpStatus.OK);
+    }
+
     // Obtener todas las tareas proximas del usuario sin completar segun id usuario
     @GetMapping("/usuario/proximas-incompletas/{usuarioId}")
     public ResponseEntity<List<TareaResponseDTO>> getUpcomingUncompletedTareasByUsuarioId(@PathVariable Long usuarioId) {

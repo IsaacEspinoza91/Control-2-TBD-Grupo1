@@ -149,6 +149,15 @@ public class TareaService {
                 .collect(Collectors.toList());
     }
 
+    // Obtener todas las tareas pendientes del usuario según id usuario
+    public List<TareaResponseDTO> obtenerTareasPendientesByUsuarioId(Long usuarioId) {
+        List<Tarea> tareas = tareaRepository.findTareasPendientesByUsuarioId(usuarioId);
+        return tareas.stream()
+                .map(TareaResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
     // Obtener todas las tareas próximas del usuario sin completar según id usuario
     public List<TareaResponseDTO> obtenerTareasPendientesProximasByUsuarioId(Long usuarioId) {
         List<Tarea> tareas = tareaRepository.findTareasPendientesProximasByUsuarioId(usuarioId);
