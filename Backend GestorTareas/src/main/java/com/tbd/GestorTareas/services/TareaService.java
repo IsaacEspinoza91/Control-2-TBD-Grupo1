@@ -42,7 +42,7 @@ public class TareaService {
         tarea.setDescripcion(tareaRequestDTO.getDescripcion());
         tarea.setFechacreacion(LocalDate.now());
         tarea.setFechavencimiento(tareaRequestDTO.getFechavencimiento());
-        tarea.setEstado(tareaRequestDTO.getEstado());
+        tarea.setEstado("pendiente");
         tarea.setUbicacion(tareaRequestDTO.toWkt()); // Convierte lat/lng a WKT
         tarea.setEliminado(tareaRequestDTO.isEliminado());
         tarea.setUsuario_id(tareaRequestDTO.getUsuario_id());

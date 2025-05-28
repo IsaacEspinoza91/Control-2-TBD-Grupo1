@@ -48,7 +48,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item" href="#" @click.prevent="selectQuery('pendiente-mas-cercana')">
-                    ¿Cuál es la tarea más cercana al usuario (que esté pendiente)?
+                    ¿Cuál es la tarea pendiente más cercana al usuario según la ubicación seleccionada en el mapa?
                   </a>
                 </li>
                 <li>
@@ -152,7 +152,35 @@
                   <!-- Dirección no disponible, mostrar latitud y longitud en su lugar -->
                   <p><strong>Latitud:</strong> {{ resultado.latitud }}</p>
                   <p><strong>Longitud:</strong> {{ resultado.longitud }}</p>
-                  <p><strong>Distancia:</strong> {{ (resultado.distancia / 1000).toFixed(2) }} km</p>
+                  <p class="card-text">
+                    <strong>Distancia:  </strong> 
+                    <span class="badge bg-primary rounded-pill">
+                      {{ (resultado.distancia / 1000).toFixed(2) }} km
+                    </span>
+                  </p>
+
+                  <!-- Mapa -->
+                  <div class="map-container" style="height: 400px; margin-top: 20px;">
+                    <l-map 
+                      ref="map"
+                      :zoom="15" 
+                      :center="[resultado.latitud, resultado.longitud]"
+                      :options="{scrollWheelZoom: false}"
+                    >
+                      <l-tile-layer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        layer-type="base"
+                        name="OpenStreetMap"
+                      ></l-tile-layer>
+                      <l-marker :lat-lng="[resultado.latitud, resultado.longitud]">
+                        <l-popup>
+                          <strong>{{ resultado.titulo }}</strong><br>
+                          {{ resultado.descripcion }}
+                        </l-popup>
+                      </l-marker>
+                    </l-map>
+                  </div>
+
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontró una tarea pendiente cercana.
@@ -169,11 +197,34 @@
                       <p class="card-text"><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
                       <p class="card-text"><strong>Fecha vencimiento:</strong> {{ resultado.fechavencimiento }}</p>
                       <p class="card-text">
-                        <strong>Distancia:</strong> 
+                        <strong>Distancia:  </strong> 
                         <span class="badge bg-primary rounded-pill">
                           {{ (resultado.distancia / 1000).toFixed(2) }} km
                         </span>
                       </p>
+
+                      <div class="map-container" style="height: 400px; margin-top: 20px;">
+                        <l-map 
+                          ref="map"
+                          :zoom="15" 
+                          :center="[resultado.latitud, resultado.longitud]"
+                          :options="{scrollWheelZoom: false}"
+                        >
+                          <l-tile-layer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            layer-type="base"
+                            name="OpenStreetMap"
+                          ></l-tile-layer>
+                          <l-marker :lat-lng="[resultado.latitud, resultado.longitud]">
+                            <l-popup>
+                              <strong>{{ resultado.titulo }}</strong><br>
+                              {{ resultado.descripcion }}
+                            </l-popup>
+                          </l-marker>
+                        </l-map>
+                      </div>
+
+
                     </div>
                   </div>
                 </div>
@@ -236,7 +287,7 @@ import { ref, onMounted } from 'vue'
 import axios from '../../api' // Importamos la instancia de axios configurada
 
 //inicio del mapa
-import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
+import { LMap, LTileLayer, LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
 
 const authStore = useAuthStore()
 

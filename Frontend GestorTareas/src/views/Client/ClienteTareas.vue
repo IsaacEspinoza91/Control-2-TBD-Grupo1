@@ -57,7 +57,7 @@
                             'btn-warning': task.estado === 'realizada',
                             'btn-success': task.estado === 'pendiente'
                         }">
-                            {{ task.estado === 'realizada' ? 'Marcar Pendiente' : 'Marcar realizada' }}
+                            {{ task.estado === 'realizada' ? 'Marcar Pendiente' : 'Marcar Realizada' }}
                         </button>
 
                         <button v-if="!task.eliminado" @click="openEditModal(task)" class="btn btn-action btn-info">
