@@ -68,8 +68,8 @@ public class TareaController {
     }
 
     @GetMapping("/usuario/{usuarioId}/tarea-cercana")
-    public ResponseEntity<TareaCercanaDTO> getTareaPendienteMasCercana(@PathVariable Long usuarioId) {
-        TareaCercanaDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
+    public ResponseEntity<TareaCercanaResponseDTO> getTareaPendienteMasCercana(@PathVariable Long usuarioId) {
+        TareaCercanaResponseDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
 
         // Caso tarea no existe
         if (tarea == null) {
@@ -79,9 +79,9 @@ public class TareaController {
         return ResponseEntity.ok(tarea);
     }
 
-    @PostMapping("/tarea-cercana")
-    public ResponseEntity<TareaCercanaDTO> getTareaPendienteMasCercana(@RequestBody TareaCercanaRequest request) {
-        TareaCercanaDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
+    @GetMapping("/tarea-cercana")
+    public ResponseEntity<TareaCercanaResponseDTO> getTareaPendienteMasCercanaSegunUbicacionEspecifica(@RequestBody TareaCercanaRequest request) {
+        TareaCercanaResponseDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
 
         if (tarea == null) {
             return ResponseEntity.noContent().build();

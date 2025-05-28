@@ -21,12 +21,12 @@
             </div>
             <!-- Lista de tareas -->
             <div class="task-grid">
-                <div v-for="task in filteredTasks" :key="task.id" class="task-card" :class="{
+                <div v-for="task in getTasksToShow" :key="task.id" class="task-card" :class="{
                     'task-completed': task.estado === 'realizada',
                     'task-pending': task.estado === 'pendiente',
                     'task-deleted': task.eliminado
                 }">
-                    <!-- Contenido de la tarjeta de tarea (igual que antes) -->
+                    <!-- Contenido de la tarjeta de tarea -->
                     <div class="task-card-header">
                         <h3 class="task-title">{{ task.titulo }}</h3>
                         <span class="task-status" :class="{
@@ -273,7 +273,7 @@ const changeTab = async (tabId) => {
 };
 
 // Filtrar tareas según la pestaña activa (simplificado)
-const filteredTasks = computed(() => {
+const getTasksToShow = computed(() => {
     return tasks.value;
 });
 

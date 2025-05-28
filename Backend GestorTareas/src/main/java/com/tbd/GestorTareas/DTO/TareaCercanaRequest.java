@@ -3,14 +3,16 @@ package com.tbd.GestorTareas.DTO;
 public class TareaCercanaRequest {
 
     private Long usuarioId;
-    private Double lng;
-    private Double lat;
+    private Double longitud;
+    private Double latitud;
 
-    public TareaCercanaRequest() {}
-    public TareaCercanaRequest(Long usuarioId, Double lng, Double lat) {
+    public TareaCercanaRequest() {
+    }
+
+    public TareaCercanaRequest(Long usuarioId, Double longitud, Double latitud) {
         this.usuarioId = usuarioId;
-        this.lng = lng;
-        this.lat = lat;
+        this.longitud = longitud;
+        this.latitud = latitud;
     }
 
     public Long getUsuarioId() {
@@ -21,19 +23,19 @@ public class TareaCercanaRequest {
         this.usuarioId = usuarioId;
     }
 
-    public Double getLng() {
-        return lng;
+    public Double getLongitud() {
+        return longitud;
     }
 
-    public void setLng(Double lng) {
-        this.lng = lng;
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
     }
 
-    public Double getLat() {
-        return lat;
+    public Double getLatitud() {
+        return latitud;
     }
 
-    public void setLat(Double lat) {
-        this.lat = lat;
+    public void setLatitud(Double latitud) {
+        this.latitud = latitud;
     }
 }

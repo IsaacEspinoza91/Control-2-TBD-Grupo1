@@ -154,55 +154,51 @@ public class TareaRepository {
 
 
     // Sentencia 2 ISAAC
-    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
+    public TareaWithDistanciaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
         String sql = """
                 SELECT
                     t.id,
                     t.titulo,
                     t.descripcion,
-                    s.nombre AS sector,
-                    ST_Distance(t.ubicacion::geography, u.ubicacion::geography) AS distanciaMetros
+                    t.fechacreacion,
+                    t.fechavencimiento,
+                    t.estado, ST_AsText(t.ubicacion) AS ubicacion, t.eliminado, t.usuario_id, t.sector_id,
+                    ST_Distance(t.ubicacion::geography, u.ubicacion::geography) AS distancia
                 FROM tarea AS t
                     JOIN usuario AS u ON t.usuario_id = u.id
-                    LEFT JOIN sector AS s ON t.sector_id = s.id
                 WHERE u.id = :usuarioId
                     AND t.estado = 'pendiente' AND t.eliminado = false
-                ORDER BY distanciaMetros ASC LIMIT 1;
+                ORDER BY distancia ASC LIMIT 1;
                 """;
 
         try (Connection con = sql2o.open()) {
             return con.createQuery(sql)
                     .addParameter("usuarioId", usuarioId)
-                    .executeAndFetchFirst(TareaCercanaDTO.class);
+                    .executeAndFetchFirst(TareaWithDistanciaDTO.class);
         }
     }
 
     // Sentencia 1 ISAAC
-    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
+    public TareaWithDistanciaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
         String sql = """
-                SELECT
-                    t.id,
-                    t.titulo,
-                    t.descripcion,
-                    s.nombre AS sector,
-                    ST_Distance(t.ubicacion::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS distanciaMetros
-                FROM tarea AS t
-                    JOIN usuario AS u ON t.usuario_id = u.id
-                    LEFT JOIN sector AS s ON t.sector_id = s.id
-                WHERE u.id = :usuarioId
-                    AND t.estado = 'pendiente' AND t.eliminado = false
-                ORDER BY distanciaMetros ASC LIMIT 1;
+                SELECT 
+                    id, titulo, descripcion, fechacreacion, fechavencimiento, estado, 
+                    ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id,
+                    ST_Distance(ubicacion::geography, ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326)::geography) AS distancia
+                FROM tarea 
+                WHERE usuario_id = :usuarioId
+                    AND estado = 'pendiente' AND eliminado = false
+                ORDER BY distancia ASC LIMIT 1;
                 """;
 
         try (Connection con = sql2o.open()) {
             return con.createQuery(sql)
                     .addParameter("usuarioId", request.getUsuarioId())
-                    .addParameter("lng", request.getLng())
-                    .addParameter("lat", request.getLat())
-                    .executeAndFetchFirst(TareaCercanaDTO.class); // TareaCercanaDTO debe manejar el WKT
+                    .addParameter("longitud", request.getLongitud())
+                    .addParameter("latitud", request.getLatitud())
+                    .executeAndFetchFirst(TareaWithDistanciaDTO.class);
         }
     }
-
 
 
     // Nuevos metodos para trabajar el front
@@ -241,7 +237,7 @@ public class TareaRepository {
     public List<Tarea> findTareasCompletadasByUsuarioId(Long usuarioId) {
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
-                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'realizada' AND eliminado = false" +
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'realizada' AND eliminado = false " +
                 "ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);
@@ -252,7 +248,7 @@ public class TareaRepository {
     public List<Tarea> findTareasPendientesByUsuarioId(Long usuarioId) {
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
-                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'pendiente' AND eliminado = false" +
+                "FROM tarea WHERE usuario_id = :usuarioId AND estado = 'pendiente' AND eliminado = false " +
                 "ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql).addParameter("usuarioId", usuarioId).executeAndFetch(Tarea.class);

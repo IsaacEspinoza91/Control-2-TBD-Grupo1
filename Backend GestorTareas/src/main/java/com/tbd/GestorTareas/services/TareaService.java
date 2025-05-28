@@ -94,13 +94,17 @@ public class TareaService {
         return tareaRepository.contarTareasRealizadasUsuariosSector();
     }
 
-    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
-        return tareaRepository.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
+    public TareaCercanaResponseDTO findTareaPendienteMasCercanaSegunUbicacionUsuario(Long usuarioId) {
+        TareaWithDistanciaDTO tareaConDistancia =  tareaRepository.findTareaPendienteMasCercanaSegunUbicacionUsuario(usuarioId);
+        TareaCercanaResponseDTO tareaResponse = new TareaCercanaResponseDTO(tareaConDistancia);
+        return tareaResponse;
     }
 
-    public TareaCercanaDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
-        validateCoordinates(request.getLat(), request.getLng());
-        return tareaRepository.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
+    public TareaCercanaResponseDTO findTareaPendienteMasCercanaSegunUbicacionEspecifica(TareaCercanaRequest request) {
+        validateCoordinates(request.getLatitud(), request.getLongitud());
+        TareaWithDistanciaDTO tareaConDistancia =  tareaRepository.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
+        TareaCercanaResponseDTO tareaResponse = new TareaCercanaResponseDTO(tareaConDistancia);
+        return tareaResponse;
     }
 
 

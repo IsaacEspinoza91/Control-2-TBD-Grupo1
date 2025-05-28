@@ -24,11 +24,26 @@ POST, URL: http://localhost:8080/api/auth/register
 Sentencias:
 1. POST: http://localhost:8080/api/tarea/tarea-cercana
 {
-    "usuarioId": 2,
-    "lng": -70.6700,
-    "lat": -33.4200
+    "usuarioId": 5,
+    "longitud": -70.6700,
+    "latitud": -33.4200
 }
 
 2. GET: http://localhost:8080/api/tarea/usuario/2/tarea-cercana
 
+Ambas entregan el siguiente formato de resultado:
+{
+    "id": 41,
+    "titulo": "Prueba",
+    "descripcion": "que pasaaaaa SA",
+    "fechacreacion": "2025-05-27",
+    "fechavencimiento": "2025-06-04",
+    "estado": "pendiente",
+    "latitud": -33.450332,
+    "longitud": -70.680658,
+    "eliminado": false,
+    "usuario_id": 5,
+    "sector_id": 1,
+    "distancia": 4794.88192832
+}
 
