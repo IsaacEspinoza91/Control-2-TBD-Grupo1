@@ -249,10 +249,12 @@ const changeTab = async (tabId) => {
             case 'realizadas':
                 endpoint = `/tarea/usuario/realizadas/${userId}`;
                 break;
+            case 'semana':
+                endpoint = `/tarea/usuario/semana-actual/${userId}`;
+                break;
             case 'proxima':
                 endpoint = `/tarea/usuario/proximas-incompletas/${userId}`;
                 break;
-            case 'todas':
             default:
                 endpoint = `/tarea/usuario/${userId}`;
         }

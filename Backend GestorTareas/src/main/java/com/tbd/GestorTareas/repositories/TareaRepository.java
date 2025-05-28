@@ -225,7 +225,7 @@ public class TareaRepository {
 
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
-                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false " +
+                "FROM tarea WHERE usuario_id = :usuarioId AND eliminado = false AND estado = 'pendiente' " +
                 "AND fechavencimiento BETWEEN :startDate AND :endDate";
         try (var con = sql2o.open()) {
             return con.createQuery(sql)
@@ -249,14 +249,26 @@ public class TareaRepository {
     // Obtener todas las tareas próximas del usuario sin completar según id usuario
     public List<Tarea> findTareasPendientesProximasByUsuarioId(Long usuarioId) {
         LocalDate today = LocalDate.now();
+        LocalDate inicioProximaSemana;
+
+        // Si hoy es lunes, sumo una semana
+        if (today.getDayOfWeek() == DayOfWeek.MONDAY) {
+            inicioProximaSemana = today.plusWeeks(1);
+        } else { // Si hoy no es lunes, voy al proximo lunes
+            inicioProximaSemana = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        }
+        LocalDate finProximaSemana = inicioProximaSemana.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
         String sql = "SELECT id, titulo, descripcion, fechacreacion, fechavencimiento, estado, " +
                 "ST_AsText(ubicacion) AS ubicacion, eliminado, usuario_id, sector_id " +
                 "FROM tarea WHERE usuario_id = :usuarioId AND estado != 'realizada' AND eliminado = false " +
-                "AND fechavencimiento >= :today ORDER BY fechavencimiento ASC";
+                "AND fechavencimiento >= :inicioProximaSemana AND fechavencimiento <= :finProximaSemana " +
+                "ORDER BY fechavencimiento ASC";
         try (var con = sql2o.open()) {
             return con.createQuery(sql)
                     .addParameter("usuarioId", usuarioId)
-                    .addParameter("today", today)
+                    .addParameter("inicioProximaSemana", inicioProximaSemana)
+                    .addParameter("finProximaSemana", finProximaSemana)
                     .executeAndFetch(Tarea.class);
         }
     }
