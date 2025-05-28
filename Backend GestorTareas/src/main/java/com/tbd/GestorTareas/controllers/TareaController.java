@@ -80,7 +80,14 @@ public class TareaController {
     }
 
     @GetMapping("/tarea-cercana")
-    public ResponseEntity<TareaCercanaResponseDTO> getTareaPendienteMasCercanaSegunUbicacionEspecifica(@RequestBody TareaCercanaRequest request) {
+    public ResponseEntity<TareaCercanaResponseDTO> getTareaPendienteMasCercanaSegunUbicacionEspecifica(
+            @RequestParam("usuarioId") Long usuarioId,
+            @RequestParam("longitud") Double longitud,
+            @RequestParam("latitud") Double latitud) {
+
+        System.out.println("➡️ Controller: llegó tarea-cercana (punto mapa)");
+
+        TareaCercanaRequest request = new TareaCercanaRequest(usuarioId, longitud, latitud);
         TareaCercanaResponseDTO tarea = tareaService.findTareaPendienteMasCercanaSegunUbicacionEspecifica(request);
 
         if (tarea == null) {
@@ -89,6 +96,7 @@ public class TareaController {
 
         return ResponseEntity.ok(tarea);
     }
+
 
 
 

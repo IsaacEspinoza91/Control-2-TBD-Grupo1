@@ -134,7 +134,6 @@
                 </div>
               </div>
 
-
               <!-- Resultado para consultas de distancia promedio punto registrado -->
               <div v-else-if="selectedQuery === 'distancia-promedio-registro'">
                 <div v-if="resultado && resultado.promedioDistancia !== undefined" class="alert alert-success">
@@ -161,6 +160,29 @@
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontró una tarea pendiente cercana.
+                </div>
+              </div>  
+              <!-- Resultado para tarea pendiente más cercana -->
+              <div v-else-if="selectedQuery === 'pendiente-mas-cercana'">
+                <div v-if="resultado && resultado.id" class="alert alert-success">
+                  <h6 class="mb-3">Tarea pendiente más cercana:</h6>
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Tarea #{{ resultado.id }}</h5>
+                      <p class="card-text"><strong>Título:</strong> {{ resultado.titulo }}</p>
+                      <p class="card-text"><strong>Descripción:</strong> {{ resultado.descripcion }}</p>
+                      <p class="card-text"><strong>Fecha vencimiento:</strong> {{ resultado.fechavencimiento }}</p>
+                      <p class="card-text">
+                        <strong>Distancia:</strong> 
+                        <span class="badge bg-primary rounded-pill">
+                          {{ (resultado.distancia / 1000).toFixed(2) }} km
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="alert alert-info">
+                  No se encontraron tareas pendientes cercanas a tu ubicación.
                 </div>
               </div>
 
@@ -200,7 +222,6 @@
               :center="mapCenter"
               @click="onMapClick"
           >
-
               <l-tile-layer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
@@ -234,7 +255,6 @@ const tareasUsuario = ref([])
 const loadingTareas = ref(false)
 const errorTareas = ref(null)
 
-
 const mapCenter = ref([-33.456, -70.648])
 const ubicacion = ref(null)
 
@@ -252,7 +272,8 @@ const queryDescriptions = {
   'sector-5km': '¿Cuál es el sector con más tareas completadas en un radio de 5 km del usuario?',
   'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes? (admin)?',
   'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?  (poner un punto en el mapa)',
-  'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?'
+  'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?',
+  'pendiente-mas-cercana': '¿Cuál es la tarea más cercana al usuario (que esté pendiente)?'
 }
 
 const toggleDropdown = () => {
@@ -316,6 +337,7 @@ const executeQuery = async () => {
     // 2. Construcción del endpoint
     let endpoint = '';
     let params = {};
+    let data = {};
 
     switch (selectedQuery.value) {
       case 'por-sector':
@@ -342,19 +364,25 @@ const executeQuery = async () => {
         break;
       case 'pendiente-mas-cercana':
         endpoint = `/tarea/tarea-cercana`;
+        params = {
+          usuarioId: authStore.user.idUsuario,
+          longitud: authStore.user?.longitud,
+          latitud: authStore.user?.latitud
+        };
         break;
+
       case 'pendiente-mas-cercana-ubi-usuario':
         endpoint = `/tarea/usuario/${authStore.user.idUsuario}/tarea-cercana`;
         break;
-    }
 
-    
+    }
 
     console.log('❗DEBUG: Datos de la petición:', {
       endpoint,
       selectedQuery: selectedQuery.value,
       user: authStore.user,
-      token: authStore.token
+      token: authStore.token,
+      data
     });
 
     // 3. Headers detallados
@@ -491,5 +519,25 @@ onMounted(() => {
 /* Estilo específico para tareas pendientes */
 .badge.bg-warning {
   color: #212529;
+}
+
+/* Estilos para la tarjeta de tarea */
+.card {
+  margin-top: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.card-text {
+  margin-bottom: 0.5rem;
 }
 </style>
