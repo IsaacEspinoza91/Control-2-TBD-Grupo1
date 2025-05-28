@@ -319,6 +319,9 @@ const executeQuery = async () => {
           latitud: authStore.user?.latitud
         };
         break;
+      case 'pendiente-mas-cercana':
+        endpoint = `/tarea/usuario/${authStore.user.idUsuario}/tarea-cercana`;
+        break;
     }
 
     
