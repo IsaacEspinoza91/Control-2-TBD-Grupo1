@@ -88,11 +88,17 @@ public class UsuarioController {
 
     //consulta 3
     @GetMapping("/promedio-de-distancia")
-    public List<UsuarioDistanciaDTO> obtenerPromedioDeDistancia(
+    public ResponseEntity<UsuarioDistanciaDTO> obtenerPromedioDeDistancia(
+            @RequestParam int usuarioId,
             @RequestParam double longitud,
             @RequestParam double latitud) {
-        System.out.println("➡️ Controller: promedio-de-distancia (usuario)");
-        return usuarioService.obtenerPromedioDistancia(longitud, latitud);
+        System.out.println("➡️ Controller: promedio-distancia (por ID de usuario: " + usuarioId + ")");
+        UsuarioDistanciaDTO resultado = usuarioService.calcularPromedioDistanciaTareasRealizadasPorUsuarioId(usuarioId, longitud, latitud);
+        if (resultado != null) {
+            return ResponseEntity.ok(resultado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/promedio-distancia/{usuarioId}")

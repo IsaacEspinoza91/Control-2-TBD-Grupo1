@@ -329,4 +329,31 @@ public class UsuarioRepository {
         }
     }
 
+    public UsuarioDistanciaDTO calcularPromedioDistanciaTareasRealizadasPorUsuarioId(int usuarioId, double longitud, double latitud) {
+        String sql = """
+        SELECT
+            u.id AS usuarioId,
+            u.nombre AS nombreUsuario,
+            u.apellido AS apellidoUsuario,
+            AVG(ST_Distance(
+                t.ubicacion,
+                ST_GeographyFromText(CONCAT('SRID=4326;POINT(', :longitud, ' ', :latitud, ')'))
+            )) AS promedioDistancia
+        FROM tarea t
+        JOIN usuario u ON t.usuario_id = u.id
+        WHERE t.estado = 'realizada' AND u.id = :usuarioId
+        GROUP BY u.id, u.nombre, u.apellido
+        """;
+
+        try (Connection con = sql2o.open()) {
+            List<UsuarioDistanciaDTO> resultados = con.createQuery(sql)
+                    .addParameter("usuarioId", usuarioId)
+                    .addParameter("longitud", longitud)
+                    .addParameter("latitud", latitud)
+                    .executeAndFetch(UsuarioDistanciaDTO.class);
+            // Devolvemos el primer resultado (o null si no hay ninguno)
+            return resultados.isEmpty() ? null : resultados.get(0);
+        }
+    }
+
 }

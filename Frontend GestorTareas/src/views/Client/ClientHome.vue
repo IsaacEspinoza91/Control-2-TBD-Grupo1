@@ -116,18 +116,14 @@
                 </div>
               </div>
 
-              <!-- Resultado para consultas de distancia promedio punto puesto -->
-              <div v-else-if="selectedQuery.includes('distancia-promedio-usuario')">
-                <div v-if="resultado.length > 0" class="alert alert-success">
-                  <h6 class="mb-3">Distancias promedio desde la ubicación seleccionada:</h6>
-                  <ul class="list-group">
-                    <li v-for="(item, index) in resultado" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
-                      {{ item.nombreUsuario }} {{ item.apellidoUsuario }}
-                      <span class="badge bg-primary rounded-pill">
-                        {{ (item.promedioDistancia / 1000).toFixed(2) }} km
-                      </span>
-                    </li>
-                  </ul>
+              <!-- Resultado para consultas de distancia promedio desde ubicación seleccionada -->
+              <div v-else-if="selectedQuery === 'distancia-promedio-usuario'">
+                <div v-if="resultado" class="alert alert-success">
+                  <h6 class="mb-3">Distancia promedio desde la ubicación seleccionada:</h6>
+                  <p><strong>{{ authStore.user.nombreUsuario }} {{ authStore.user.apellidoUsuario }}</strong></p>
+                  <p>Promedio de distancia: 
+                    <strong>{{ (resultado.promedioDistancia / 1000).toFixed(2) }} km</strong>
+                  </p>
                 </div>
                 <div v-else class="alert alert-info">
                   No se encontraron resultados para esta consulta.
@@ -358,8 +354,9 @@ const executeQuery = async () => {
       case 'distancia-promedio-usuario':
         endpoint = `/usuario/promedio-de-distancia`;
         params = {
-          longitud: authStore.user?.longitud,
-          latitud: authStore.user?.latitud
+          usuarioId: authStore.user.idUsuario,
+          longitud: ubicacion.value.lng,
+          latitud: ubicacion.value.lat
         };
         break;
       case 'pendiente-mas-cercana':
