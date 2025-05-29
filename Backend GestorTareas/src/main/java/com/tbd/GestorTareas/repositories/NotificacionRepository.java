@@ -16,6 +16,21 @@ public class NotificacionRepository {
         this.sql2o = sql2o;
     }
 
+
+    public void generarNotificacionesPorVencer() {
+        String sql = "CALL generar_notificaciones_por_vencer()";
+
+        try (Connection con = sql2o.beginTransaction()) {
+            con.createQuery(sql).executeUpdate();
+            con.commit(); // guarda los cambios
+        } catch (Exception e) {
+            System.err.println("Error al generar notificaciones: " + e.getMessage());
+            // opcional: puedes registrar más detalles si quieres
+        }
+    }
+
+
+
     // Crear una nueva notificación
     public Notificacion create(Notificacion notificacion) {
         String sql = "INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id) " +

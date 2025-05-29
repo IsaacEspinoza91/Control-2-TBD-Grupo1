@@ -18,6 +18,8 @@ public class NotificacionController {
         this.notificacionService = notificacionService;
     }
 
+
+
     @PostMapping
     public Notificacion crearNotificacion(@RequestBody Notificacion notificacion) {
         return notificacionService.crearNotificacion(notificacion);

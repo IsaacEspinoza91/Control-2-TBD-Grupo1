@@ -37,11 +37,36 @@ CREATE TABLE tarea (
 
 CREATE TABLE notificacion (
     id SERIAL PRIMARY KEY,
-    mensaje VARCHAR(50),
+    mensaje VARCHAR(250),
     fechaenvio DATE,
     tarea_id INTEGER REFERENCES tarea(id),
     usuario_id INTEGER REFERENCES usuario(id)
 );
+
+--Proceso almacenado para Crear la notificación a tareas que vencen en 1 dia.
+CREATE OR REPLACE PROCEDURE generar_notificaciones_por_vencer()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id)
+    SELECT 
+        'La tarea "' || t.titulo || '" está por vencer.',
+        CURRENT_DATE,
+        t.id,
+        t.usuario_id
+    FROM tarea t
+    WHERE 
+        t.fechavencimiento = CURRENT_DATE + INTERVAL '1 day'
+        AND t.eliminado IS DISTINCT FROM TRUE
+        AND NOT EXISTS (
+            SELECT 1 
+            FROM notificacion n 
+            WHERE n.tarea_id = t.id
+              AND n.mensaje LIKE '%por vencer%'
+        );
+END;
+$$;
+
 
 -- Índice para búsquedas por email/nick (login)
 CREATE INDEX idx_usuario_login ON usuario(email, nick);
