@@ -260,7 +260,7 @@ const currentTask = ref({
     sector_id: null
 });
 
-// Pestañas disponibles (modificado)
+// Pestañas disponibles 
 const tabs = [
     { id: 'todas', label: 'Todas' },
     { id: 'pendientes', label: 'Pendientes' },
@@ -269,7 +269,7 @@ const tabs = [
     { id: 'proxima', label: 'Próxima Semana' }
 ];
 
-// Cambiar pestaña (nueva función)
+// Cambiar pestaña
 const changeTab = async (tabId) => {
     activeTab.value = tabId;
 
@@ -306,12 +306,12 @@ const changeTab = async (tabId) => {
     }
 };
 
-// Filtrar tareas según la pestaña activa (simplificado)
+// Filtrar tareas según la pestaña activa 
 const getTasksToShow = computed(() => {
     return tasks.value;
 });
 
-// Formatear fecha (igual que antes)
+// Formatear fecha 
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const fecha = new Date(dateString + "T00:00:00").toLocaleDateString('es-ES', options);
@@ -320,19 +320,38 @@ const formatDate = (dateString) => {
 
 // Cargar tareas (modificado)
 const loadTasks = async () => {
-    try {
-        isSearching.value = false;
-        const userId = authStore.user?.idUsuario;
-        if (!userId) return;
-
-        const response = await api.get(`/tarea/usuario/${userId}`);
-        tasks.value = response.data;
-    } catch (error) {
-        console.error('Error al cargar tareas:', error);
+  try {
+    const userId = authStore.user?.idUsuario;
+    if (!userId) return;
+    
+    let endpoint = `/tarea/usuario/${userId}`;
+    
+    switch(activeTab.value) {
+        case 'pendientes':
+            endpoint = `/tarea/usuario/pendientes/${userId}`;
+            break;
+        case 'realizadas':
+            endpoint = `/tarea/usuario/completadas/${userId}`;
+            break;
+        case 'semana':
+            endpoint = `/tarea/usuario/semana-actual/${userId}`;
+            break;
+        case 'proxima':
+            endpoint = `/tarea/usuario/proximas-incompletas/${userId}`;
+            break;
+        case 'todas':
+        default:
+            endpoint = `/tarea/usuario/${userId}`;
     }
+    
+    const response = await api.get(endpoint);
+    tasks.value = response.data;
+  } catch (error) {
+    console.error('Error al cargar tareas:', error);
+  }
 };
 
-// Resto de funciones (igual que antes)
+// Resto de funciones 
 const createTask = async () => {
     try {
         currentTask.value.usuario_id = authStore.user?.idUsuario;
