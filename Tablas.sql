@@ -50,12 +50,13 @@ CREATE OR REPLACE PROCEDURE generar_notificaciones_por_vencer()
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id)
+    INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id, visto)
     SELECT 
         'La tarea "' || t.titulo || '" está por vencer.',
         CURRENT_DATE,
         t.id,
-        t.usuario_id
+        t.usuario_id,
+        FALSE
     FROM tarea t
     WHERE 
         t.fechavencimiento = CURRENT_DATE + INTERVAL '1 day'
