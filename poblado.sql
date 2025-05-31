@@ -1,9 +1,6 @@
--- Usuarios
-INSERT INTO usuario (rut, nombre, apellido, email, password, ubicacion, nick, tipo)
-VALUES 
-('11111111-1', 'Admin', 'Uno', 'admin@tareas.cl', 'admin123', ST_SetSRID(ST_MakePoint(-70.6506, -33.4372), 4326), 'admin1', 'admin'),
-('22222222-2', 'Trabajador', 'Uno', 'usuario1@tareas.cl', 'usuario123', ST_SetSRID(ST_MakePoint(-70.6700, -33.4200), 4326), 'Bob El Contructor', 'cliente'),
-('33333333-3', 'Trabajador', 'Dos', 'usuario2@tareas.cl', 'usuario123', ST_SetSRID(ST_MakePoint(-70.6100, -33.4900), 4326), 'Felix', 'cliente');
+--admin: Correo:admin@tareas.cl ; Contraseña:admin123
+--trabajador1: Correo:usuario1@tareas.cl ; Contraseña:usuario123
+--trabajador2: Correo:usuario2@tareas.cl ; Contraseña:usuario123
 
 -- Sectores
 INSERT INTO sector (nombre, categoria, geom)
@@ -89,3 +86,119 @@ VALUES
 ('Nivelación cunetas', 'Agua estancada por desnivel', '2025-05-03', '2025-05-23', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6140, -33.4210), 4326), false, 2, 3),
 ('Reemplazo adoquines', 'Adoquines rotos en zona peatonal', '2025-05-05', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6170, -33.4120), 4326), true, 3, 3),
 ('Reparación reja desagüe', 'Reja oxidada cede al paso', '2025-05-06', '2025-05-29', 'realizada', ST_SetSRID(ST_MakePoint(-70.6110, -33.4150), 4326), false, 2, 3);
+
+
+-- Tareas adicionales para Sector 1 (Construcción)
+INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id)
+VALUES
+('Cimentación edificio B', 'Preparación terreno para cimientos', '2025-05-16', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6320, -33.4080), 4326), false, 2, 1),
+('Instalación andamios', 'Montaje andamios para fachada', '2025-05-17', '2025-06-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6410, -33.4070), 4326), false, 3, 1),
+('Revisión planos', 'Verificación contra obra real', '2025-05-18', '2025-05-28', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6380, -33.4090), 4326), false, 2, 1),
+('Pruebas de carga', 'Pruebas estructura principal', '2025-05-19', '2025-06-09', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6350, -33.4110), 4326), false, 3, 1),
+('Instalación ventanas', 'Colocación de marco y vidrios', '2025-05-20', '2025-06-10', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6340, -33.4130), 4326), false, 2, 1),
+('Impermeabilización', 'Aplicación en techos', '2025-05-21', '2025-06-01', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6370, -33.4140), 4326), false, 3, 1),
+('Instalación eléctrica', 'Cableado primer piso', '2025-05-22', '2025-06-12', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6390, -33.4150), 4326), false, 2, 1),
+('Pintura interior', 'Primera mano en departamentos', '2025-05-23', '2025-06-13', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6360, -33.4160), 4326), false, 3, 1),
+('Instalación ascensor', 'Montaje sistema de elevación', '2025-05-24', '2025-06-14', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6330, -33.4170), 4326), false, 2, 1),
+('Jardinería exterior', 'Preparación áreas verdes', '2025-05-25', '2025-06-15', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6320, -33.4180), 4326), false, 3, 1),
+
+-- Tareas adicionales para Sector 2 (Semáforos)
+('Reemplazo poste', 'Poste semáforo accidentado', '2025-05-16', '2025-05-31', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6540, -33.5210), 4326), false, 3, 2),
+('Actualización software', 'Actualización controladores', '2025-05-17', '2025-06-01', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6530, -33.5220), 4326), false, 2, 2),
+('Instalación cámaras', 'Cámaras para monitoreo tráfico', '2025-05-18', '2025-06-02', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6520, -33.5230), 4326), false, 3, 2),
+('Reparación cableado', 'Cables expuestos en cruce', '2025-05-19', '2025-06-03', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6510, -33.5240), 4326), false, 2, 2),
+('Calibración sensores', 'Ajuste sensores vehiculares', '2025-05-20', '2025-06-04', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6500, -33.5250), 4326), false, 3, 2),
+('Limpieza lentes', 'Limpieza de lentes semáforos', '2025-05-21', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6490, -33.5260), 4326), false, 2, 2),
+('Instalación señalética', 'Señales informativas nuevas', '2025-05-22', '2025-06-06', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6480, -33.5270), 4326), false, 3, 2),
+('Reposición viseras', 'Viseras dañadas por vandalismo', '2025-05-23', '2025-06-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6470, -33.5280), 4326), false, 2, 2),
+('Verificación alimentación', 'Revisión fuente de poder', '2025-05-24', '2025-06-08', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6460, -33.5290), 4326), false, 3, 2),
+('Instalación semáforo peatonal', 'Nuevo cruce peatonal', '2025-05-25', '2025-06-09', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6450, -33.5300), 4326), false, 2, 2),
+
+-- Tareas adicionales para Sector 3 (Calles)
+('Reparación brocal', 'Brocal de alcantarilla roto', '2025-05-16', '2025-05-31', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6190, -33.4160), 4326), false, 2, 3),
+('Poda de árboles', 'Ramas obstruyen calzada', '2025-05-17', '2025-06-01', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6200, -33.4170), 4326), false, 3, 3),
+('Reparación cordón', 'Cordón de vereda dañado', '2025-05-18', '2025-06-02', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6210, -33.4180), 4326), false, 2, 3),
+('Limpieza sumideros', 'Sumideros obstruidos', '2025-05-19', '2025-06-03', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6220, -33.4190), 4326), false, 3, 3),
+('Reposición baldosas', 'Baldosas rotas en paseo', '2025-05-20', '2025-06-04', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6230, -33.4200), 4326), false, 2, 3),
+('Pintado mobiliario', 'Bancas y basureros', '2025-05-21', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6240, -33.4210), 4326), false, 3, 3),
+('Reparación escaleras', 'Escaleras de acceso dañadas', '2025-05-22', '2025-06-06', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6250, -33.4220), 4326), false, 2, 3),
+('Instalación barandas', 'Barandas de seguridad nuevas', '2025-05-23', '2025-06-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6260, -33.4230), 4326), false, 3, 3),
+('Reparación luminarias', 'Bases de postes dañadas', '2025-05-24', '2025-06-08', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6270, -33.4240), 4326), false, 2, 3),
+('Nivelación acceso', 'Acceso para discapacitados', '2025-05-25', '2025-06-09', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6280, -33.4250), 4326), false, 3, 3);
+
+-- Tareas para Usachita (estudio)
+INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id)
+VALUES
+('Reparación mobiliario', 'Arreglo de sillas en biblioteca', '2025-05-20', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6850, -33.4500), 4326), false, 2, 4),
+('Mantención laboratorios', 'Revisión equipos computación', '2025-05-21', '2025-06-06', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6830, -33.4510), 4326), false, 3, 4),
+('Pintura aulas', 'Renovación pintura salas de clase', '2025-05-22', '2025-06-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6820, -33.4490), 4326), false, 2, 4),
+
+-- Tareas para Parque Ohiggins (recreacion)
+('Podar árboles', 'Poda de mantención en áreas verdes', '2025-05-20', '2025-06-10', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6600, -33.4650), 4326), false, 3, 5),
+('Reparar juegos infantiles', 'Arreglo de columpios dañados', '2025-05-21', '2025-06-11', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6620, -33.4630), 4326), false, 2, 5),
+('Limpieza laguna', 'Retiro de algas y desechos', '2025-05-22', '2025-06-12', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6580, -33.4640), 4326), false, 3, 5),
+
+-- Tareas para Aeropuerto (viaje)
+('Mantención pista', 'Revisión superficie de aterrizaje', '2025-05-20', '2025-06-15', 'pendiente', ST_SetSRID(ST_MakePoint(-70.7900, -33.3900), 4326), false, 2, 6),
+('Señalización taxiways', 'Repintado de señalética horizontal', '2025-05-21', '2025-06-16', 'pendiente', ST_SetSRID(ST_MakePoint(-70.7950, -33.3950), 4326), false, 3, 6),
+('Limpieza terminal', 'Aseo profundo área de check-in', '2025-05-22', '2025-06-17', 'pendiente', ST_SetSRID(ST_MakePoint(-70.7850, -33.4000), 4326), false, 2, 6),
+
+-- Tareas para Cementerio General (reparaciones)
+('Reparación mausoleos', 'Arreglo de estructuras dañadas', '2025-05-20', '2025-06-18', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6480, -33.4100), 4326), false, 3, 7),
+('Poda de árboles', 'Mantención de vegetación', '2025-05-21', '2025-06-19', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6500, -33.4120), 4326), false, 2, 7),
+('Limpieza general', 'Retiro de hojas y desechos', '2025-05-22', '2025-06-20', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6450, -33.4150), 4326), false, 3, 7),
+
+-- Tareas para Santiago Centro (mantencion)
+('Reparación veredas', 'Arreglo de aceras dañadas', '2025-05-20', '2025-06-21', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6500, -33.4400), 4326), false, 2, 8),
+('Mantención luminarias', 'Cambio de ampolletas quemadas', '2025-05-21', '2025-06-22', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6550, -33.4350), 4326), false, 3, 8),
+('Limpieza calles', 'Barrido y retiro de basura', '2025-05-22', '2025-06-23', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6450, -33.4450), 4326), false, 2, 8),
+
+-- Tareas para Estadio Monumental (futbol)
+('Reparación graderías', 'Arreglo de asientos dañados', '2025-05-20', '2025-06-24', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6060, -33.5050), 4326), false, 3, 9),
+('Mantención césped', 'Riego y fertilización cancha', '2025-05-21', '2025-06-25', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6070, -33.5040), 4326), false, 2, 9),
+('Limpieza baños', 'Aseo profundo instalaciones', '2025-05-22', '2025-06-26', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6050, -33.5060), 4326), false, 3, 9),
+
+-- Tareas para Estadio Santa Laura (futbol)
+('Pintura tribunas', 'Renovación pintura sector norte', '2025-05-20', '2025-06-27', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6590, -33.4040), 4326), false, 2, 10),
+('Reparación iluminación', 'Cambio de reflectores dañados', '2025-05-21', '2025-06-28', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6580, -33.4050), 4326), false, 3, 10),
+('Mantención marcador', 'Reparación pantalla electrónica', '2025-05-22', '2025-06-29', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6600, -33.4045), 4326), false, 2, 10),
+
+-- Tareas para Estadio Nacional (entretencion)
+('Reparación pista atlética', 'Arreglo superficie de carrera', '2025-05-20', '2025-06-30', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6100, -33.4650), 4326), false, 3, 11),
+('Mantención camerinos', 'Reparación duchas y lockers', '2025-05-21', '2025-07-01', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6120, -33.4660), 4326), false, 2, 11),
+('Limpieza general', 'Aseo completo instalaciones', '2025-05-22', '2025-07-02', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6110, -33.4640), 4326), false, 3, 11),
+
+-- Tareas para Palafitos Chiloe (paisaje)
+('Reparación estructuras', 'Refuerzo pilotes palafitos', '2025-05-20', '2025-07-03', 'pendiente', ST_SetSRID(ST_MakePoint(-73.7650, -42.4700), 4326), false, 2, 12),
+('Pintura fachadas', 'Renovación pintura exterior', '2025-05-21', '2025-07-04', 'pendiente', ST_SetSRID(ST_MakePoint(-73.7655, -42.4705), 4326), false, 3, 12),
+('Mantención pasarelas', 'Reparación puentes peatonales', '2025-05-22', '2025-07-05', 'pendiente', ST_SetSRID(ST_MakePoint(-73.7660, -42.4710), 4326), false, 2, 12),
+
+-- Tareas para Mall Costanera Center (entretencion)
+('Limpieza vidrieras', 'Lavado de fachadas de cristal', '2025-05-20', '2025-07-06', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6075, -33.4170), 4326), false, 3, 13),
+('Mantención ascensores', 'Revisión técnica mensual', '2025-05-21', '2025-07-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6080, -33.4175), 4326), false, 2, 13),
+('Reparación pisos', 'Arreglo de losetas dañadas', '2025-05-22', '2025-07-08', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6065, -33.4180), 4326), false, 3, 13),
+
+-- Tareas para Mall Parque Arauco (entretencion)
+('Podar áreas verdes', 'Mantención de jardines interiores', '2025-05-20', '2025-07-09', 'pendiente', ST_SetSRID(ST_MakePoint(-70.5800, -33.4020), 4326), false, 2, 14),
+('Reparación estacionamiento', 'Arreglo de badenes dañados', '2025-05-21', '2025-07-10', 'pendiente', ST_SetSRID(ST_MakePoint(-70.5790, -33.4030), 4326), false, 3, 14),
+('Limpieza fuentes', 'Aseo y mantención de fuentes', '2025-05-22', '2025-07-11', 'pendiente', ST_SetSRID(ST_MakePoint(-70.5810, -33.4010), 4326), false, 2, 14),
+
+-- Tareas para Escuela de Ingenieria Beaucheff UCH (estudio)
+('Mantención laboratorios', 'Calibración equipos electrónicos', '2025-05-20', '2025-07-12', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6620, -33.4570), 4326), false, 3, 15),
+('Reparación mobiliario', 'Arreglo de mesas y sillas', '2025-05-21', '2025-07-13', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6630, -33.4580), 4326), false, 2, 15),
+('Pintura aulas', 'Renovación pintura salas', '2025-05-22', '2025-07-14', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6610, -33.4575), 4326), false, 3, 15),
+
+-- Tareas para Faro La Serena (reparaciones)
+('Pintura estructura', 'Renovación pintura exterior', '2025-05-20', '2025-07-15', 'pendiente', ST_SetSRID(ST_MakePoint(-71.2740, -29.9055), 4326), false, 2, 16),
+('Reparación escalera', 'Arreglo de escalones dañados', '2025-05-21', '2025-07-16', 'pendiente', ST_SetSRID(ST_MakePoint(-71.2742, -29.9056), 4326), false, 3, 16),
+('Mantención lente', 'Limpieza y calibración óptica', '2025-05-22', '2025-07-17', 'pendiente', ST_SetSRID(ST_MakePoint(-71.2741, -29.9057), 4326), false, 2, 16),
+
+-- Tareas para Memorial 11 Septiembre (reparaciones)
+('Limpieza placas', 'Pulido de placas conmemorativas', '2025-05-20', '2025-07-18', 'pendiente', ST_SetSRID(ST_MakePoint(-74.0130, 40.7120), 4326), false, 3, 17),
+('Reparación fuentes', 'Arreglo sistema de agua', '2025-05-21', '2025-07-19', 'pendiente', ST_SetSRID(ST_MakePoint(-74.0135, 40.7125), 4326), false, 2, 17),
+('Mantención iluminación', 'Cambio de focos quemados', '2025-05-22', '2025-07-20', 'pendiente', ST_SetSRID(ST_MakePoint(-74.0140, 40.7115), 4326), false, 3, 17),
+
+-- Tareas para Torre Eiffel (reparaciones)
+('Pintura estructura', 'Renovación pintura metalica', '2025-05-20', '2025-07-21', 'pendiente', ST_SetSRID(ST_MakePoint(2.2940, 48.8580), 4326), false, 2, 18),
+('Mantención ascensores', 'Revisión técnica mensual', '2025-05-21', '2025-07-22', 'pendiente', ST_SetSRID(ST_MakePoint(2.2950, 48.8590), 4326), false, 3, 18),
+('Limpieza miradores', 'Aseo de plataformas de observación', '2025-05-22', '2025-07-23', 'pendiente', ST_SetSRID(ST_MakePoint(2.2960, 48.8570), 4326), false, 2, 18);
