@@ -79,3 +79,11 @@ onMounted(() => {
   cargarNotificaciones()
 })
 </script>
+
+<style scoped>
+.dropdown-item {
+  white-space: normal;
+  word-wrap: break-word;
+}
+</style>
+

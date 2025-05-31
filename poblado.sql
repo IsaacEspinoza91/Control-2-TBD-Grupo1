@@ -87,6 +87,22 @@ VALUES
 ('Reemplazo adoquines', 'Adoquines rotos en zona peatonal', '2025-05-05', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6170, -33.4120), 4326), true, 3, 3),
 ('Reparación reja desagüe', 'Reja oxidada cede al paso', '2025-05-06', '2025-05-29', 'realizada', ST_SetSRID(ST_MakePoint(-70.6110, -33.4150), 4326), false, 2, 3);
 
+--Notificaciones de prueba
+INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id, visto) VALUES
+(
+  'Notificacion de prueba, si quieres generar notificaciones puedes editar una tarea y poner un mas de la fecha actual (Las notificaiones se actualizan cada 40 segundos)',
+  CURRENT_DATE,
+  1,
+  2,
+  false
+),
+(
+  'Notificacion de prueba, si quieres generar notificaciones puedes editar una tarea y poner un mas de la fecha actual (Las notificaiones se actualizan cada 40 segundos)',
+  CURRENT_DATE,
+  3,
+  3,
+  false
+);
 
 -- Tareas adicionales para Sector 1 (Construcción)
 INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado, ubicacion, eliminado, usuario_id, sector_id)

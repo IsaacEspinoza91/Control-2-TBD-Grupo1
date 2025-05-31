@@ -317,7 +317,7 @@ const queryDescriptions = {
   'por-sector': '¿Cuántas tareas ha hecho el usuario por sector?',
   'sector-2km': '¿Cuál es el sector con más tareas completadas en un radio de 2 km del usuario?',
   'sector-5km': '¿Cuál es el sector con más tareas completadas en un radio de 5 km del usuario?',
-  'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes? (admin)?',
+  'tareas-pendientes-sector': '¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?',
   'distancia-promedio-usuario': '¿Cuál es el promedio de distancia de las tareas completadas respecto a la ubicación del usuario?  (poner un punto en el mapa)',
   'distancia-promedio-registro': '¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?',
   'pendiente-mas-cercana': '¿Cuál es la tarea pendiente más cercana al usuario según la ubicación seleccionada en el mapa?',
