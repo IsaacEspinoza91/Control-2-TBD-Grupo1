@@ -59,12 +59,12 @@ VALUES
 -- Sector 1 - Construcción
 ('Reparación edificio', 'Obra en construcción', '2025-05-05', '2025-06-15', 'realizada', ST_SetSRID(ST_MakePoint(-70.6300, -33.4100), 4326), false, 2, 1),
 ('Obra nuevo edificio', 'Comienzo de obra en Las Condes', '2025-05-11', '2025-06-20', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6400, -33.4050), 4326), false, 2, 1),
-('Demolición muro', 'Inicio de demolición en terreno fiscal', '2025-05-07', '2025-05-27', 'realizada', ST_SetSRID(ST_MakePoint(-70.6250, -33.4100), 4326), true, 3, 1),
+('Demolición muro', 'Inicio de demolición en terreno fiscal', '2025-05-07', '2025-05-27', 'realizada', ST_SetSRID(ST_MakePoint(-70.5750, -33.4700), 4326), true, 3, 1),
 ('Inspección terreno', 'Revisión inicial para construcción', '2025-05-01', '2025-05-20', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6450, -33.4100), 4326), false, 2, 1),
-('Entrega de materiales', 'Llegada de concreto al sitio', '2025-05-03', '2025-05-17', 'realizada', ST_SetSRID(ST_MakePoint(-70.6480, -33.4180), 4326), false, 3, 1),
-('Montaje estructura', 'Estructura metálica en obra nueva', '2025-05-05', '2025-06-10', 'realizada', ST_SetSRID(ST_MakePoint(-70.6420, -33.4120), 4326), false, 2, 1),
+('Entrega de materiales', 'Llegada de concreto al sitio', '2025-05-03', '2025-05-17', 'realizada', ST_SetSRID(ST_MakePoint(-70.6150, -33.4950), 4326), false, 3, 1),
+('Montaje estructura', 'Estructura metálica en obra nueva', '2025-05-05', '2025-06-10', 'realizada', ST_SetSRID(ST_MakePoint(-70.6600, -33.4250), 4326), false, 2, 1),
 ('Supervisión seguridad', 'Revisión de normas en obra', '2025-05-06', '2025-05-26', 'realizada', ST_SetSRID(ST_MakePoint(-70.6430, -33.4090), 4326), false, 2, 1),
-('Retiro de escombros', 'Limpieza final de zona', '2025-05-10', '2025-05-20', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6460, -33.4160), 4326), false, 3, 1),
+('Retiro de escombros', 'Limpieza final de zona', '2025-05-10', '2025-05-20', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6150, -33.4950), 4326), false, 3, 1),
 
 -- Sector 2 - Semáforos
 ('Instalar semáforo', 'Semáforo en mal estado', '2025-05-10', '2025-05-30', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6450, -33.5200), 4326), false, 3, 2),
@@ -93,7 +93,7 @@ INSERT INTO tarea (titulo, descripcion, fechacreacion, fechavencimiento, estado,
 VALUES
 ('Cimentación edificio B', 'Preparación terreno para cimientos', '2025-05-16', '2025-06-05', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6320, -33.4080), 4326), false, 2, 1),
 ('Instalación andamios', 'Montaje andamios para fachada', '2025-05-17', '2025-06-07', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6410, -33.4070), 4326), false, 3, 1),
-('Revisión planos', 'Verificación contra obra real', '2025-05-18', '2025-05-28', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6380, -33.4090), 4326), false, 2, 1),
+('Revisión planos', 'Verificación contra obra real', '2025-05-18', '2025-05-28', 'realizada', ST_SetSRID(ST_MakePoint(-70.6300, -33.4400), 4326), false, 2, 1),
 ('Pruebas de carga', 'Pruebas estructura principal', '2025-05-19', '2025-06-09', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6350, -33.4110), 4326), false, 3, 1),
 ('Instalación ventanas', 'Colocación de marco y vidrios', '2025-05-20', '2025-06-10', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6340, -33.4130), 4326), false, 2, 1),
 ('Impermeabilización', 'Aplicación en techos', '2025-05-21', '2025-06-01', 'pendiente', ST_SetSRID(ST_MakePoint(-70.6370, -33.4140), 4326), false, 3, 1),

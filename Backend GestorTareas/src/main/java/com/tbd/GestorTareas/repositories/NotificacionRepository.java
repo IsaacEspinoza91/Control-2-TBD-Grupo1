@@ -5,6 +5,7 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -33,15 +34,15 @@ public class NotificacionRepository {
 
     // Crear una nueva notificación
     public Notificacion create(Notificacion notificacion) {
-        String sql = "INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id) " +
-                "VALUES (:mensaje, :fechaenvio, :tarea_id, :usuario_id) RETURNING id";
+        String sql = "INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id, visto) " +
+                "VALUES (:mensaje, :fechaenvio, :tarea_id, :usuario_id, :visto) RETURNING id";
         try (Connection conn = sql2o.beginTransaction()) {
             Integer id = conn.createQuery(sql)
                     .addParameter("mensaje", notificacion.getMensaje())
                     .addParameter("fechaenvio", notificacion.getFechaenvio())
                     .addParameter("tarea_id", notificacion.getTarea_id())
                     .addParameter("usuario_id", notificacion.getUsuario_id())
-                    .addParameter("visto", false)
+                    .addParameter("visto", false)  // ahora sí se inserta
                     .executeScalar(Integer.class);
 
             if (id == null) {
@@ -56,6 +57,7 @@ public class NotificacionRepository {
             throw e;
         }
     }
+
 
 
 
@@ -81,13 +83,14 @@ public class NotificacionRepository {
 
     // Obtener todas las notificación por id del usuario
     public List<Notificacion> getByIdUserNoVisto(Integer id) {
-        String sql = "SELECT * FROM notificacion WHERE usuario_id = :id AND visto = FALSE;";
+        String sql = "SELECT * FROM notificacion WHERE usuario_id = :id AND visto = false;";
         try (Connection conn = sql2o.open()) {
             return conn.createQuery(sql)
                     .addParameter("id", id)
                     .executeAndFetch(Notificacion.class);
         }
     }
+
 
     // Obtener todas las notificación por id del usuario
     public List<Notificacion> getByIdUserTotal(Integer id) {

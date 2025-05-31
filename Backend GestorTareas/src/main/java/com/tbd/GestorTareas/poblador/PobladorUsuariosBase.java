@@ -24,7 +24,7 @@ public class PobladorUsuariosBase {
                     .executeScalar(Long.class);
 
             if (total > 0) {
-                System.out.println("Usuarios ya poblados.");
+                System.out.println("Los usuarios ya existen se omite el poblador.");
                 return;
             }
 
@@ -32,7 +32,7 @@ public class PobladorUsuariosBase {
                     "VALUES (:rut, :nombre, :apellido, :email, :password, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :nick, :tipo)";
 
             insertarUsuario(con, sql, "11111111-1", "Admin", "Uno", "admin@tareas.cl", "admin123", -70.6506, -33.4372, "admin1", "admin");
-            insertarUsuario(con, sql, "22222222-2", "Trabajador", "Uno", "usuario1@tareas.cl", "usuario123", -70.6700, -33.4200, "Bob El Contructor", "cliente");
+            insertarUsuario(con, sql, "22222222-2", "Obrero", "Uno", "usuario1@tareas.cl", "usuario123", -70.6700, -33.4200, "Bob El Contructor", "cliente");
             insertarUsuario(con, sql, "33333333-3", "Trabajador", "Dos", "usuario2@tareas.cl", "usuario123", -70.6100, -33.4900, "Felix", "cliente");
 
             System.out.println("Usuarios insertados correctamente.");
