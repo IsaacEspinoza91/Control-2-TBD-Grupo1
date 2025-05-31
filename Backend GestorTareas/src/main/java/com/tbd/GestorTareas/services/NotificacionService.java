@@ -47,6 +47,18 @@ public class NotificacionService {
         return notificacionRepository.getById(id);
     }
 
+    public List<Notificacion>  obtenerPorIdUsuarioNoVisto(Integer id) {
+        return notificacionRepository.getByIdUserNoVisto(id);
+    }
+
+    public List<Notificacion>  obtenerPorIdUsuarioTotal(Integer id) {
+        return notificacionRepository.getByIdUserTotal(id);
+    }
+
+    public boolean marcarComoVista(Integer id) {
+        return notificacionRepository.marcarComoVista(id);
+    }
+
     public void actualizarNotificacion(Notificacion notificacion) {
         notificacionRepository.update(notificacion);
     }

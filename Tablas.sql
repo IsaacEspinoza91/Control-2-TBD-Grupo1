@@ -40,7 +40,9 @@ CREATE TABLE notificacion (
     mensaje VARCHAR(250),
     fechaenvio DATE,
     tarea_id INTEGER REFERENCES tarea(id),
-    usuario_id INTEGER REFERENCES usuario(id)
+    usuario_id INTEGER REFERENCES usuario(id),
+    visto BOOLEAN
+
 );
 
 --Proceso almacenado para Crear la notificación a tareas que vencen en 1 dia.

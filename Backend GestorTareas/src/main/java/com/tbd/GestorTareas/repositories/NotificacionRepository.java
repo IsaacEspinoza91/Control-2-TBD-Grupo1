@@ -41,6 +41,7 @@ public class NotificacionRepository {
                     .addParameter("fechaenvio", notificacion.getFechaenvio())
                     .addParameter("tarea_id", notificacion.getTarea_id())
                     .addParameter("usuario_id", notificacion.getUsuario_id())
+                    .addParameter("visto", false)
                     .executeScalar(Integer.class);
 
             if (id == null) {
@@ -77,6 +78,39 @@ public class NotificacionRepository {
                     .executeAndFetchFirst(Notificacion.class);
         }
     }
+
+    // Obtener todas las notificación por id del usuario
+    public List<Notificacion> getByIdUserNoVisto(Integer id) {
+        String sql = "SELECT * FROM notificacion WHERE usuario_id = :id AND visto = FALSE;";
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery(sql)
+                    .addParameter("id", id)
+                    .executeAndFetch(Notificacion.class);
+        }
+    }
+
+    // Obtener todas las notificación por id del usuario
+    public List<Notificacion> getByIdUserTotal(Integer id) {
+        String sql = "SELECT * FROM notificacion WHERE usuario_id = :id;";
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery(sql)
+                    .addParameter("id", id)
+                    .executeAndFetch(Notificacion.class);
+        }
+    }
+
+    // Marcar una notificación como vista
+    public boolean marcarComoVista(Integer idNotificacion) {
+        String sql = "UPDATE notificacion SET visto = TRUE WHERE id = :id;";
+        try (Connection conn = sql2o.open()) {
+            int rowsUpdated = conn.createQuery(sql)
+                    .addParameter("id", idNotificacion)
+                    .executeUpdate()
+                    .getResult();
+            return rowsUpdated > 0;
+        }
+    }
+
 
     // Actualizar notificación
     public void update(Notificacion notificacion) {

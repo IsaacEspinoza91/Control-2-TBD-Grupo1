@@ -5,6 +5,7 @@ import RegisterView from '../views/Auth/RegisterView.vue'
 import AdminHome from '../views/Admin/AdminHome.vue'
 import ClientHome from '../views/Client/ClientHome.vue'
 import ClienteTareas from '../views/Client/ClienteTareas.vue'
+import ClienteNotification from '../views/Client/ClientNotification.vue'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
@@ -48,6 +49,12 @@ const router = createRouter({
             path: '/client/tasks/manager',
             name: 'client-task',
             component: ClienteTareas,
+            meta: { requiresAuth: true, role: 'cliente' }
+        },
+        {
+            path: '/client/notification',
+            name: 'notification',
+            component: ClienteNotification,
             meta: { requiresAuth: true, role: 'cliente' }
         }
     ]
