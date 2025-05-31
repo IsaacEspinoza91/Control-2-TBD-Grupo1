@@ -74,6 +74,21 @@ const marcarComoVisto = async (notif) => {
   }
 }
 
+import {onUnmounted } from 'vue'
+
+let intervalId = null
+
+onMounted(() => {
+  cargarNotificaciones()
+  intervalId = setInterval(() => {
+    cargarNotificaciones()
+  }, 10000) // 10 segundos
+})
+
+onUnmounted(() => {
+  clearInterval(intervalId)
+})
+
 
 onMounted(() => {
   cargarNotificaciones()

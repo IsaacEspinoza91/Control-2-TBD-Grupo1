@@ -90,14 +90,14 @@ VALUES
 --Notificaciones de prueba
 INSERT INTO notificacion (mensaje, fechaenvio, tarea_id, usuario_id, visto) VALUES
 (
-  'Notificacion de prueba, si quieres generar notificaciones puedes editar una tarea y poner un mas de la fecha actual (Las notificaiones se actualizan cada 40 segundos)',
+  'Notificacion de prueba, Las notificaciones nuevas Tardan 40 segundos en aparecer. Para probar, edita la fecha de una tarea pendiente y adelántala un día de la fecha actual.',
   CURRENT_DATE,
   1,
   2,
   false
 ),
 (
-  'Notificacion de prueba, si quieres generar notificaciones puedes editar una tarea y poner un mas de la fecha actual (Las notificaiones se actualizan cada 40 segundos)',
+  'Notificacion de prueba, Las notificaciones nuevas Tardan 40 segundos en aparecer. Para probar, edita la fecha de una tarea pendiente y adelántala un día de la fecha actual.',
   CURRENT_DATE,
   3,
   3,
