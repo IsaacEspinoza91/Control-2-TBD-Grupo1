@@ -317,7 +317,6 @@ public class UsuarioRepository {
         ORDER BY
             u.id;
     """;
-
         try (Connection conn = sql2o.open()) {
             return conn.createQuery(sql)
                     .addParameter("usuarioId", usuarioId)
