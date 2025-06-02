@@ -1,9 +1,6 @@
-CREATE database GestorTareas;
-\connect  gestortareas;
+CREATE EXTENSION IF NOT EXISTS postgis;
 
-CREATE EXTENSION postgis;
-
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
     id SERIAL PRIMARY KEY,
     rut VARCHAR(12) UNIQUE NOT NULL,
     nombre VARCHAR(50) NOT NULL,
@@ -15,14 +12,14 @@ CREATE TABLE usuario (
     tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('admin', 'cliente'))
 );
 
-CREATE TABLE sector (
+CREATE TABLE IF NOT EXISTS sector (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     categoria VARCHAR(50) NOT NULL, -- construcción, semáforos, etc.
     geom GEOGRAPHY(POLYGON, 4326)
 );
 
-CREATE TABLE tarea (
+CREATE TABLE IF NOT EXISTS tarea (
     id SERIAL PRIMARY KEY,
     titulo VARCHAR(50),
     descripcion VARCHAR(50),
@@ -35,7 +32,7 @@ CREATE TABLE tarea (
     sector_id INTEGER REFERENCES sector(id)  -- asociación con sector
 );
 
-CREATE TABLE notificacion (
+CREATE TABLE IF NOT EXISTS notificacion (
     id SERIAL PRIMARY KEY,
     mensaje VARCHAR(250),
     fechaenvio DATE,
@@ -72,8 +69,8 @@ $$;
 
 
 -- Índice para búsquedas por email/nick (login)
-CREATE INDEX idx_usuario_login ON usuario(email, nick);
+CREATE INDEX IF NOT EXISTS idx_usuario_login ON usuario(email, nick);
 
 -- Índices búsqueda de tareas segun ubicacion
-CREATE INDEX idx_tarea_ubicacion ON tarea USING GIST(ubicacion);
-CREATE INDEX idx_usuario_ubicacion ON usuario USING GIST(ubicacion);
+CREATE INDEX IF NOT EXISTS idx_tarea_ubicacion ON tarea USING GIST(ubicacion);
+CREATE INDEX IF NOT EXISTS idx_usuario_ubicacion ON usuario USING GIST(ubicacion);

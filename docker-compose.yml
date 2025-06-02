@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgis/postgis:17-3.4
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Tablas.sql:/docker-entrypoint-initdb.d/01_tablas.sql
+    networks:
+      - tdb_net
+
+  backend:
+    build:
+      context: "./Backend GestorTareas"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - tdb_net
+    entrypoint: ["sh", "-c", "sleep 30 && java -jar app.jar"]
+
+  init:
+    image: postgres:17
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    volumes:
+      - ./poblado.sql:/poblado.sql
+    command: >
+      bash -c "
+        sleep 40 &&
+        PGPASSWORD=${POSTGRES_PASSWORD} psql -h db -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f /poblado.sql &&
+        echo 'Poblado completado (solo una vez)' || echo 'Ya estaba implementado poblado o falló' &&
+        echo '✅ Todo listo y funcionando!'
+      "
+    networks:
+      - tdb_net
+
+
+  frontend:
+    build:
+      context: "./Frontend GestorTareas"
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    networks:
+      - tdb_net
+
+volumes:
+  postgres_data:
+
+networks:
+  tdb_net:
+    driver: bridge

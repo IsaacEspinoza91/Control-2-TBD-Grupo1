@@ -27,6 +27,33 @@ Este sistema permite la administración de tareas asociadas a ubicaciones geogr�
 
 ## 🚀 Cómo Ejecutar el Proyecto
 
+### Metodo 1: Uso de Docker Compose
+
+1. Clonar este repositorio o descargar el proyecto en formato ZIP y descomprimirlo.
+2. Abrir una terminal en la raíz del proyecto (`/Control-2-TBD-Grupo1`).
+3. Ejecutar el siguiente comando:
+
+```bash
+docker-compose up --build
+```
+
+> ℹ️ **Notas**:
+>
+> * La primera vez que se ejecuta el entorno, puede tardar alrededor de **1 minuto y 30 segundos**.
+> * Si el log se detiene un tiempo considerable en:
+>   `db-1 | 2025-06-02 00:40:01.861 UTC [1] LOG:  database system is ready to accept connections`, es un comportamiento **normal**.
+> * Una vez que aparezca el mensaje **"✅ Todo listo y funcionando!"** en la consola, el sistema estará completamente operativo y listo para pruebas.
+
+#### Comandos útiles:
+
+* `docker-compose up --build`: Levanta el entorno completo (construyendo imágenes si es necesario).
+* `docker-compose down`: Detiene los contenedores activos (mantiene los datos).
+* `docker-compose down -v --rmi all`: Elimina contenedores, volúmenes y las imágenes creadas.
+
+---
+
+### Metodo 2: Ejecucion manual
+
 ### 1. Clonar el repositorio
 
 ```bash
