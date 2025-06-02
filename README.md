@@ -29,9 +29,10 @@ Este sistema permite la administración de tareas asociadas a ubicaciones geogr�
 
 ### Metodo 1: Uso de Docker Compose
 
-1. Clonar este repositorio o descargar el proyecto en formato ZIP y descomprimirlo.
-2. Abrir una terminal en la raíz del proyecto (`/Control-2-TBD-Grupo1`).
-3. Ejecutar el siguiente comando:
+1. Encender Docker Desktop
+2. Clonar este repositorio o descargar el proyecto en formato ZIP y descomprimirlo.
+3. Abrir una terminal en la raíz del proyecto (`/Control-2-TBD-Grupo1`).
+4. Ejecutar el siguiente comando:
 
 ```bash
 docker-compose up --build
